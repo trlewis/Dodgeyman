@@ -1,51 +1,43 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace Dodgeyman
+﻿namespace Dodgeyman
 {
-    using System.Runtime.Remoting.Contexts;
-    using System.Security.AccessControl;
-    using System.Threading;
     using GameScreens.GameplayScreen;
     using SFML.Graphics;
-    using SFML.System;
     using SFML.Window;
-    
 
     class Program
     {
-        private static RenderWindow window;
-        private static bool running = true;
-        private static GameplayScreen gameScreen;
+        private static RenderWindow _window;
+        private static ArenaScreen _gameScreen;
 
-        static void Main(string[] args)
+        //static void Main(string[] args)
+        static void Main()
         {
             CreateWindow();
-            gameScreen = new GameplayScreen(window);
+            _gameScreen = new ArenaScreen(_window);
 
-            while (window.IsOpen)
+            while (_window.IsOpen)
             {
                 //TODO: use sfml clock to decide how long to sleep
                 System.Threading.Thread.Sleep(1000/60);
-                window.DispatchEvents();
-                window.Clear(Color.Black);
-                gameScreen.Update();
-                gameScreen.Draw();
-                window.Display();
+                _window.DispatchEvents();
+                _window.Clear(Color.Black);
+                _gameScreen.Update();
+                _gameScreen.Draw();
+                _window.Display();
             }
         }
 
         private static void CreateWindow()
         {
-            ContextSettings contextSettings = new ContextSettings();
-            contextSettings.DepthBits = 24;
-
-            window = new RenderWindow(new VideoMode(640, 480), "blah", Styles.Close|Styles.Titlebar);
-            window.Closed += (sender, args) => window.Close();
-            window.SetActive();
+            var contextSettings = new ContextSettings { DepthBits = 24 };
+            _window = new RenderWindow(new VideoMode(600, 600), "Dodgeyman", Styles.Close|Styles.Titlebar, contextSettings);
+            _window.Closed += (sender, args) => _window.Close();
+            _window.KeyPressed += (sender, args) =>
+            {
+                if (args.Code == Keyboard.Key.Escape)
+                    _window.Close();
+            };
+            _window.SetActive();
         }
 
     }

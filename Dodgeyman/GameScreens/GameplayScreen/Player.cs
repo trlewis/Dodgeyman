@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace Dodgeyman.GameScreens.GameplayScreen
+﻿namespace Dodgeyman.GameScreens.GameplayScreen
 {
     using SFML.Graphics;
     using SFML.System;
@@ -12,8 +6,13 @@ namespace Dodgeyman.GameScreens.GameplayScreen
 
     internal class Player
     {
-        //private Vector2f _position;
+        private const float Speed = 4.0f;
         private Vector2f _velocity;
+        private bool _movingLeft;
+        private bool _movingRight;
+        private bool _movingDown;
+        private bool _movingUp;
+
         public Player(Vector2f initialPosition)
         {
             //this._position = initialPosition;
@@ -26,9 +25,19 @@ namespace Dodgeyman.GameScreens.GameplayScreen
         //public Vector2f Position { get { return this._position; } }
         public Shape PlayerSprite { get; private set; }
 
-        public void UpdatePosition()
+        public void Update()
         {
-            //this._position += this._velocity;
+            this.UpdatePosition();
+        }
+
+        private void UpdatePosition()
+        {
+            /* i know this looks weird, but it'll prevent wonky behavior when the user presses
+             * left+right or up+down. instead of reversing directions it'll just stop the player
+             * and resume the direction they're holding when they let go of one of the keys. */
+            float vx = (this._movingLeft ? -1 : 0) + (this._movingRight ? 1 : 0);
+            float vy = (this._movingUp ? -1 : 0) + (this._movingDown ? 1 : 0);
+            this._velocity = new Vector2f(vx*Speed, vy*Speed);
             this.PlayerSprite.Position += this._velocity;
         }
 
@@ -37,16 +46,16 @@ namespace Dodgeyman.GameScreens.GameplayScreen
             switch (e.Code)
             {
                 case Keyboard.Key.Up:
-                    this._velocity.Y = -4;
+                    this._movingUp = true;
                     break;
                 case Keyboard.Key.Down:
-                    this._velocity.Y = 4;
+                    this._movingDown = true;
                     break;
                 case Keyboard.Key.Left:
-                    this._velocity.X = -4;
+                    this._movingLeft = true;
                     break;
                 case Keyboard.Key.Right:
-                    this._velocity.X = 4;
+                    this._movingRight = true;
                     break;
             }
         }
@@ -56,16 +65,16 @@ namespace Dodgeyman.GameScreens.GameplayScreen
             switch (e.Code)
             {
                 case Keyboard.Key.Up:
-                    this._velocity.Y = 0;
+                    this._movingUp = false;
                     break;
                 case Keyboard.Key.Down:
-                    this._velocity.Y = 0;
+                    this._movingDown = false;
                     break;
                 case Keyboard.Key.Left:
-                    this._velocity.X = 0;
+                    this._movingLeft = false;
                     break;
                 case Keyboard.Key.Right:
-                    this._velocity.X = 0;
+                    this._movingRight = false;
                     break;
             }
         }
