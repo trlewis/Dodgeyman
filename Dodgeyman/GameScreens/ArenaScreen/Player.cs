@@ -64,6 +64,18 @@
         private float PlayerTop { get { return this.PlayerSprite.Position.Y; } }
         private float PlayerBottom { get { return this.PlayerSprite.Position.Y + this.PlayerSprite.Size.Y; } }
 
+        /// <summary>
+        /// The position that should be used for collision detection
+        /// </summary>
+        public Vector2f HitPosition
+        {
+            get
+            {
+                return new Vector2f(this.PlayerSprite.Position.X + PlayerSize/2, 
+                    this.PlayerSprite.Position.Y + PlayerSize/2);
+            }
+        }
+
 
         public void KeyPressed(object sender, KeyEventArgs e)
         {

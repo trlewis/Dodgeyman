@@ -60,6 +60,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Code\Extensions\Vector2fExtensions.cs" />
     <Compile Include="GameScreens\ArenaScreen\ArenaScreen.cs" />
     <Compile Include="GameScreens\ArenaScreen\DodgeLine.cs" />
     <Compile Include="GameScreens\ArenaScreen\DodgeLineDirection.cs" />
