@@ -1,6 +1,6 @@
 ﻿namespace Dodgeyman
 {
-    using GameScreens.GameplayScreen;
+    using GameScreens.ArenaScreen;
     using SFML.Graphics;
     using SFML.Window;
 
@@ -9,7 +9,6 @@
         private static RenderWindow _window;
         private static ArenaScreen _gameScreen;
 
-        //static void Main(string[] args)
         static void Main()
         {
             CreateWindow();
