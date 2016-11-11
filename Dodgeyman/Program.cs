@@ -4,7 +4,7 @@
     using SFML.Graphics;
     using SFML.Window;
 
-    class Program
+    static class Program
     {
         private static RenderWindow _window;
         private static ArenaScreen _gameScreen;

@@ -2,12 +2,14 @@
 {
     using System;
     using System.Collections.Generic;
+    using System.Globalization;
     using SFML.Graphics;
     using SFML.System;
 
     internal class ArenaScreen
     {
         private const float PlayableAreaPercent = 0.7f;
+        private const float ScoreScale = 10;
 
         private readonly List<DodgeLine> _lines = new List<DodgeLine>();
         private readonly Clock _arenaClock = new Clock();
@@ -17,12 +19,18 @@
         private int _lastLineSpawnTime; //in milliseconds
         private bool _playerHit;
         private int _score;
+        private readonly BitmapFont.BitmapFont _bf;
 
         public ArenaScreen(RenderWindow target)
         {
             this.RenderWindow = target;
             this.CreateArena(this.RenderWindow.Size);
             this.CreatePlayer();
+
+            this._bf = new BitmapFont.BitmapFont("Assets/monochromeSimple.png");
+            this._bf.Sprite.Scale = new Vector2f(ScoreScale, ScoreScale);
+            this._bf.Sprite.Color = new Color(0xFF, 0xFF, 0xFF, 0x33);
+
             var clockTime = this._arenaClock.ElapsedTime;
             this._lastLineSpawnTime = clockTime.AsMilliseconds();
         }
@@ -38,11 +46,13 @@
             var arenaSize = new Vector2f(width, height);
             var dx = screenSize.X - arenaSize.X;
             var dy = screenSize.Y - arenaSize.Y;
-            this.ArenaRectangle = new RectangleShape(arenaSize);
-            this.ArenaRectangle.FillColor = Color.Transparent;
-            this.ArenaRectangle.Position = new Vector2f(dx/2, dy/2);
-            this.ArenaRectangle.OutlineColor = new Color(0x44,0x44,0x44);
-            this.ArenaRectangle.OutlineThickness = 3f;
+            this.ArenaRectangle = new RectangleShape(arenaSize)
+                                  {
+                                      FillColor = Color.Transparent,
+                                      Position = new Vector2f(dx/2, dy/2),
+                                      OutlineColor = new Color(0x44, 0x44, 0x44),
+                                      OutlineThickness = 3f
+                                  };
         }
 
         private void CreatePlayer()
@@ -61,16 +71,29 @@
         {
             this.RenderWindow.Draw(this.ArenaRectangle);
             this.RenderWindow.Draw(this.Player.PlayerSprite);
-            foreach(var line in this._lines)
+            this.DrawScore();
+
+            foreach (var line in this._lines)
                 line.Draw(this.RenderWindow);
         }
+
+        private void DrawScore()
+        {
+            this._bf.RenderText(this._score.ToString(CultureInfo.InvariantCulture));
+            var textWidth = this._bf.Sprite.TextureRect.Width*this._bf.Sprite.Scale.X;
+            var textHeight = this._bf.Sprite.TextureRect.Height*this._bf.Sprite.Scale.Y;
+            var x = (this.RenderWindow.Size.X - textWidth)/2;
+            var y = (this.RenderWindow.Size.Y - textHeight)/2;
+            this._bf.Sprite.Position = new Vector2f(x, y);
+            this.RenderWindow.Draw(this._bf.Sprite);
+        }
+
 
         public void Update()
         {
             this.Player.Update();
             this.HandleLineSpawning();
             this.UpdateLines();
-            this.RenderWindow.SetTitle(String.Format("Dodgeyman - Score: {0}", this._score));
         }
 
         private void UpdateLines()
