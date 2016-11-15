@@ -1,10 +1,11 @@
 ﻿namespace Dodgeyman.BitmapFont
 {
+    using System;
     using SFML.Graphics;
     using SFML.System;
 
     //TODO: rename this or the namespace so their names don't clash
-    class BitmapFont
+    public class BitmapFont : IDisposable
     {
         private const int StartPixel = 3;
         private const int NumAsciiChars = 256;
@@ -37,17 +38,17 @@
             this._isImageKeyed = options.B > 0;
             this.ProcessImage();
             this._renderTexture = new RenderTexture(1000, this._sourceImage.Size.Y);
-            this.Sprite = new Sprite(this._renderTexture.Texture);
+            this.StringSprite = new Sprite(this._renderTexture.Texture);
         }
 
         /// <summary>
         /// The finished text string that is used to draw.
         /// </summary>
-        public Sprite Sprite { get; private set; }
+        public Sprite StringSprite { get; private set; }
 
 
         /// <summary>
-        /// Renders the given string and updates <see cref="Sprite"/> to contain the string.
+        /// Renders the given string and updates <see cref="StringSprite"/> to contain the string.
         /// </summary>
         /// <param name="str">The text to render.</param>
         public void RenderText(string str)
@@ -57,7 +58,7 @@
             { // recreate the rendertexture only if the string would be too long to fit
                 this._renderTexture.Dispose();
                 this._renderTexture = new RenderTexture(width, this._sourceImage.Size.Y);
-                this.Sprite.Texture = this._renderTexture.Texture;
+                this.StringSprite.Texture = this._renderTexture.Texture;
             }
             //clear the rendertexture so we can put the new string on it
             this._renderTexture.Clear(Color.Transparent);
@@ -79,7 +80,7 @@
             this._renderTexture.Display(); //"apply" the stuff we drew
             
             //set the rect the sprite grabs from to match the size of the string that was just drawn
-            this.Sprite.TextureRect = new IntRect(0, 0, (int)width, (int)this._sourceImage.Size.Y);
+            this.StringSprite.TextureRect = new IntRect(0, 0, (int)width, (int)this._sourceImage.Size.Y);
         }
 
         /// <summary>
@@ -118,6 +119,18 @@
             if (this._isImageKeyed)
                 this._sourceImage.CreateMaskFromColor(this._maskColor);
             this._sourceTexture = new Texture(this._sourceImage);
+        }
+
+        public void Dispose()
+        {
+            if(this._renderTexture != null)
+                this._renderTexture.Dispose();
+            if(this.StringSprite != null)
+                this.StringSprite.Dispose();
+            if(this._sourceTexture != null)
+                this._sourceTexture.Dispose();
+            if(this._sourceImage != null)
+                this._sourceImage.Dispose();
         }
     }
 }

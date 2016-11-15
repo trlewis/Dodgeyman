@@ -1,10 +1,11 @@
 ﻿namespace Dodgeyman.GameScreens.ArenaScreen
 {
+    using Models;
     using SFML.Graphics;
     using SFML.System;
     using SFML.Window;
 
-    internal class Player
+    internal class Player : ActiveEntity
     {
         private const float PlayerSize = 3f;
         private const float Speed = 2.25f;
@@ -17,14 +18,33 @@
         private bool _movingUp;
         private Vector2f _velocity;
 
-        public Player(Vector2f initialPosition, FloatRect arenaBounds)
+        public Player(FloatRect arenaBounds)
         {
             this._arenaBounds = arenaBounds;
             this._velocity = new Vector2f(0, 0);
             this.PlayerSprite = new RectangleShape(new Vector2f(PlayerSize, PlayerSize));
             this.PlayerSprite.FillColor = Color.Cyan;
-            this.PlayerSprite.Position = initialPosition;
+            var px = (arenaBounds.Width/2) + arenaBounds.Left;
+            var py = (arenaBounds.Height/2) + arenaBounds.Top;
+            this.PlayerSprite.Position = new Vector2f(px, py);
+            this.IsActive = true;
         }
+
+        #region Inherited members
+
+        protected override void Activate()
+        {
+            GameScreenManager.Instance.RenderWindow.KeyPressed += this.KeyPressed;
+            GameScreenManager.Instance.RenderWindow.KeyReleased += this.KeyReleased;
+        }
+
+        protected override void Deactivate()
+        {
+            GameScreenManager.Instance.RenderWindow.KeyPressed -= this.KeyPressed;
+            GameScreenManager.Instance.RenderWindow.KeyReleased -= this.KeyReleased;
+        }
+
+        #endregion Inherited members
 
         public RectangleShape PlayerSprite { get; private set; }
         public Color Color { get { return this.PlayerSprite.FillColor; } }
@@ -76,8 +96,7 @@
             }
         }
 
-
-        public void KeyPressed(object sender, KeyEventArgs e)
+        private void KeyPressed(object sender, KeyEventArgs e)
         {
             switch (e.Code)
             {
@@ -102,7 +121,7 @@
             }
         }
 
-        public void KeyReleased(object sender, KeyEventArgs e)
+        private void KeyReleased(object sender, KeyEventArgs e)
         {
             switch (e.Code)
             {

@@ -2,10 +2,11 @@
 {
     using System;
     using Code.Extensions;
+    using Models;
     using SFML.Graphics;
     using SFML.System;
 
-    internal class DodgeLine
+    internal class DodgeLine : ActiveEntity
     {
         private const float LineWidth = 2f;
         private const float Speed = 3.5f;
@@ -54,9 +55,24 @@
             //pick Color
             var rand = new Random();
             Color c = rand.Next()%2 == 0 ? Color.Cyan : Color.Red;
-
             this._lineShape = new RectangleShape(size) { Position = pos, FillColor = c };
+
+            this.IsActive = true; //enable it to move and be detected
         }
+
+        #region Inherited members
+
+        protected override void Activate()
+        {
+            //nothing to do here
+        }
+
+        protected override void Deactivate()
+        {
+            //nothing to do here
+        }
+
+        #endregion Inherited members
 
         public bool IsFinished
         {
@@ -94,6 +110,9 @@
 
         public void Update()
         {
+            if (!this.IsActive)
+                return;
+
             this._lineShape.Position += this._velocity;
             this.CheckCollision();
         }
@@ -105,9 +124,10 @@
 
         private void CheckCollision()
         {
-            //if a collision has already been detected don't bother doing anything else
+            //if a collision has already been detected or is inactive don't bother doing anything else
             if (this.IsCollided)
                 return;
+
             //get which side of the line the player is on
             var first = this.GetPosition1();
             var second = this.GetPosition2();
