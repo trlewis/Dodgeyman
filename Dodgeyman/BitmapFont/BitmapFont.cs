@@ -73,6 +73,7 @@
                 var rekt = this._originalLetterPositions[c];
                 letterSprite.TextureRect = rekt;
                 letterSprite.Position = new Vector2f(xpos, 0);
+                //TODO: don't use character spacing before words or after words. that's what the space character is for
                 xpos += rekt.Width + this._charSpacing;
                 letterSprite.Draw(this._renderTexture, RenderStates.Default);
             }
@@ -88,9 +89,17 @@
         /// </summary>
         private uint GetStringWidth(string str)
         {
+            if (str.Length <= 0)
+                return 0;
+
             uint width = 0;
             foreach (char c in str)
-                width += (uint)this._originalLetterPositions[c].Width + (uint)this._charSpacing;
+                width += (uint)this._originalLetterPositions[c].Width;
+            
+            //TODO: don't use character spacing before words or after words. that's what the space character is for
+            //this will at least make sure it only includes spaces BETWEEN the characters in a string. That is, for
+            //an n length string, there are n-1 spaces between characters, not n.
+            width += (uint) ((str.Length - 1)*this._charSpacing);
             return width;
         }
 

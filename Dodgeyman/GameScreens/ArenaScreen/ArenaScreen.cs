@@ -10,7 +10,7 @@
     internal class ArenaScreen : GameScreen
     {
         private const float PlayableAreaPercent = 0.7f;
-        private const float ScoreScale = 10;
+        private const float ScoreScale = 15;
 
         private readonly List<DodgeLine> _lines = new List<DodgeLine>();
         private readonly Clock _arenaClock = new Clock();
@@ -61,7 +61,7 @@
             this.CreateArena();
             this.CreatePlayer();
 
-            this._bf = new BitmapFont.BitmapFont("Assets/monochromeSimple.png");
+            this._bf = new BitmapFont.BitmapFont("Assets/5x5numbers.png");
             this._bf.StringSprite.Scale = new Vector2f(ScoreScale, ScoreScale);
             this._bf.StringSprite.Color = new Color(0xFF, 0xFF, 0xFF, 0x33);
 
