@@ -3,6 +3,7 @@
     using System;
     using System.Collections.Generic;
     using System.Globalization;
+    using Lines;
     using SFML.Graphics;
     using SFML.System;
     using SFML.Window;
@@ -13,16 +14,19 @@
         private const float ScoreScale = 15;
 
         private readonly List<DodgeLine> _lines = new List<DodgeLine>();
+        private readonly Queue<DodgeLine> _finishedLines = new Queue<DodgeLine>(); //lines to remove from list
         private readonly Clock _arenaClock = new Clock();
 
         //this is so we don't count an already crossed line every frame
-        private readonly List<DodgeLine> _crossedLines = new List<DodgeLine>();
+        //private readonly List<DodgeLine> _crossedLines = new List<DodgeLine>();
         
         private int _lineSpawnTime = 2000; //in milliseconds, goes down as the game goes on
         private int _lastLineSpawnTime; //in milliseconds
         private bool _playerHit;
         private int _score;
         private BitmapFont.BitmapFont _bf;
+        private RectangleShape ArenaRectangle { get; set; }
+        private Player Player { get; set; }
 
         #region Inherited members
 
@@ -79,9 +83,6 @@
 
         #endregion Inherited members
 
-        private RectangleShape ArenaRectangle { get; set; }
-        private Player Player { get; set; }
-
         private void CreateArena()
         {
             var screenSize = GameScreenManager.Instance.RenderWindow.Size;
@@ -127,6 +128,17 @@
 
             var windowSize = GameScreenManager.Instance.RenderWindow.Size;
             var dl = new DodgeLine(windowSize, this.Player);
+            dl.Crossed += (sender, args) =>
+            {
+                if (!args.Hit)
+                    this._score++;
+                //TODO: do something if player was hit
+            };
+            dl.Finished += (sender, args) =>
+            {
+                if(sender is DodgeLine)
+                    this._finishedLines.Enqueue(sender as DodgeLine);
+            };
             this._lines.Add(dl);
             this._lastLineSpawnTime = clockTime;
         }
@@ -139,28 +151,11 @@
 
         private void UpdateLines()
         {
-            var finishedLines = new List<DodgeLine>();
             foreach (DodgeLine line in this._lines)
-            {
                 line.Update();
-                if (line.IsCrossed && !this._crossedLines.Contains(line))
-                {
-                    this._crossedLines.Add(line);
-                    if (line.IsCollided)
-                        this._playerHit = true;
-                    else
-                        this._score++;
-                }
 
-                if(line.IsFinished)
-                    finishedLines.Add(line);
-            }
-
-            foreach (DodgeLine line in finishedLines)
-            {
-                this._lines.Remove(line);
-                this._crossedLines.Remove(line);
-            }
+            while (this._finishedLines.Count > 0)
+                this._lines.Remove(this._finishedLines.Dequeue());
         }
     }
 }

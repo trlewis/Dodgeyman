@@ -6,6 +6,7 @@
     using SFML.System;
     using SFML.Window;
 
+    //TODO: this probably doesn't need to use a singleton pattern...
     internal class GameScreenManager : IDisposable
     {
         private static GameScreenManager _managerInstance;

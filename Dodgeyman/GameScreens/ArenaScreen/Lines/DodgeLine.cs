@@ -1,4 +1,4 @@
-﻿namespace Dodgeyman.GameScreens.ArenaScreen
+﻿namespace Dodgeyman.GameScreens.ArenaScreen.Lines
 {
     using System;
     using Code.Extensions;
@@ -16,6 +16,10 @@
         private readonly RectangleShape _lineShape;
         private readonly Player _player;
         private readonly Vector2f _velocity;
+
+        public EventHandler<LineCrossedEventArgs> Crossed;
+        public EventHandler Finished;
+        private bool _isCrossed;
 
         //which side of the line the player is on. starts at 0 then is either 1 or -1 after the first check
         private int _playerSide;
@@ -57,6 +61,9 @@
             Color c = rand.Next()%2 == 0 ? Color.Cyan : Color.Red;
             this._lineShape = new RectangleShape(size) { Position = pos, FillColor = c };
 
+            //initialize side for collision detection
+            this.UpdatePlayerSide();
+
             this.IsActive = true; //enable it to move and be detected
         }
 
@@ -74,7 +81,7 @@
 
         #endregion Inherited members
 
-        public bool IsFinished
+        private bool IsFinished
         {
             get
             {
@@ -86,20 +93,10 @@
                     return true;
                 if (this._direction == DodgeLineDirection.Up && (this._lineShape.Position.Y + LineWidth) < 0)
                     return true;
+
                 return false;
             }
         }
-
-        /// <summary>
-        /// Has the player crossed the line, may or may not indicate a collision occured
-        /// </summary>
-        public bool IsCrossed { get; private set; }
-
-        /// <summary>
-        /// Has the player collieded with the line (i.e.: has the player crossed over the line
-        /// with a different color?)
-        /// </summary>
-        public bool IsCollided { get; private set; }
 
         private static DodgeLineDirection GetRandomDirection()
         {
@@ -114,6 +111,10 @@
                 return;
 
             this._lineShape.Position += this._velocity;
+            if (this.IsFinished)
+                this.Finished.SafeInvoke(this, EventArgs.Empty);
+
+            // if the line is finished then it shouldn't be collidable
             this.CheckCollision();
         }
 
@@ -124,23 +125,26 @@
 
         private void CheckCollision()
         {
-            //if a collision has already been detected or is inactive don't bother doing anything else
-            if (this.IsCollided)
-                return;
+            var prevSide = this._playerSide;
+            this.UpdatePlayerSide();
 
-            //get which side of the line the player is on
+            if(this._playerSide != prevSide)
+            {
+                var collided = !this._lineShape.FillColor.Equals(this._player.Color);
+                if(collided || !this._isCrossed) //only count scoring crosses once, count collisions all the time
+                    this.Crossed.SafeInvoke(this, new LineCrossedEventArgs(collided));
+                this._isCrossed = true;
+            }
+        }
+
+        private void UpdatePlayerSide()
+        {
             var first = this.GetPosition1();
             var second = this.GetPosition2();
             var offsetToSecond = second - first;
             var offsetToPlayer = this._player.HitPosition - first;
-
-            var cross = offsetToSecond.Cross(offsetToPlayer);
-            var side = cross > 0 ? 1 : -1;
-            if (this._playerSide != 0 && this._playerSide != side) //don't count the first frame
-                this.IsCrossed = true;
-            if (this.IsCrossed && !this._lineShape.FillColor.Equals(this._player.Color))
-                this.IsCollided = true;
-            this._playerSide = side;
+            var crossProduct = offsetToSecond.Cross(offsetToPlayer);
+            this._playerSide = crossProduct > 0 ? 1 : -1;
         }
 
         private Vector2f GetPosition1()
