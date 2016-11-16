@@ -72,6 +72,7 @@
     <Compile Include="GameScreens\GameScreenManager.cs" />
     <Compile Include="GameScreens\MainMenuScreen.cs" />
     <Compile Include="Models\ActiveEntity.cs" />
+    <Compile Include="Models\LineShape.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
