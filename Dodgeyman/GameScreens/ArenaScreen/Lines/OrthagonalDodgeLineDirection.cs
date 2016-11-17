@@ -1,9 +1,9 @@
 ﻿namespace Dodgeyman.GameScreens.ArenaScreen.Lines
 {
     /// <summary>
-    /// Which direction a <see cref="DodgeLine"/> moves
+    /// Which direction a <see cref="OrthagonalDodgeLine"/> moves
     /// </summary>
-    enum DodgeLineDirection
+    enum OrthagonalDodgeLineDirection
     {
         Down,
         Left,

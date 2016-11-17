@@ -65,7 +65,8 @@
     <Compile Include="Code\Extensions\Vector2fExtensions.cs" />
     <Compile Include="GameScreens\ArenaScreen\ArenaScreen.cs" />
     <Compile Include="GameScreens\ArenaScreen\Lines\DodgeLine.cs" />
-    <Compile Include="GameScreens\ArenaScreen\Lines\DodgeLineDirection.cs" />
+    <Compile Include="GameScreens\ArenaScreen\Lines\OrthagonalDodgeLine.cs" />
+    <Compile Include="GameScreens\ArenaScreen\Lines\OrthagonalDodgeLineDirection.cs" />
     <Compile Include="GameScreens\ArenaScreen\Lines\LineCrossedEventArgs.cs" />
     <Compile Include="GameScreens\ArenaScreen\Player.cs" />
     <Compile Include="GameScreens\GameScreen.cs" />

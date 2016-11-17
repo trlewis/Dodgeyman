@@ -136,8 +136,7 @@
             if (clockTime - this._lastLineSpawnTime < this._lineSpawnTime)
                 return;
 
-            var windowSize = GameScreenManager.RenderWindow.Size;
-            var dl = new DodgeLine(windowSize, this.Player);
+            var dl = new OrthagonalDodgeLine(this.Player);
             dl.Crossed += this.LineCrossed;
             dl.Finished += this.LineFinished;
             this._lines.Add(dl);
