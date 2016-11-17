@@ -17,6 +17,10 @@
             this.CalculateVertices();
         }
 
+        // ---------------------------------------------
+        // PROPERTIES
+        // ---------------------------------------------
+
         /// <summary>
         /// The offset of the second point from the first. LineShapes are always 
         /// created with the first point at 0,0.
@@ -41,6 +45,30 @@
             }
         }
 
+        // ---------------------------------------------
+        // INHERITED MEMBERS
+        // ---------------------------------------------
+        
+        #region Inherited members
+
+        public override Vector2f GetPoint(uint index)
+        {
+            if (index > 4)
+                return this._vertices[0].Position;
+            return this._vertices[index].Position;
+        }
+
+        public override uint GetPointCount()
+        {
+            return 4;
+        }
+
+        #endregion Inherited members
+
+        // ---------------------------------------------
+        // METHODS
+        // ---------------------------------------------
+        
         private void CalculateVertices()
         {
             //vertices are based in local space. that means point 1 is always the origin. point 2 is just the offset from that
@@ -53,21 +81,5 @@
 
             this.Update();
         }
-
-        #region Inherited members
-
-        public override uint GetPointCount()
-        {
-            return 4;
-        }
-
-        public override Vector2f GetPoint(uint index)
-        {
-            if (index > 4)
-                return this._vertices[0].Position;
-            return this._vertices[index].Position;
-        }
-
-        #endregion Inherited members
     }
 }

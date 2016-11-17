@@ -36,8 +36,12 @@
                 this.ChoiceSelected();
 
             if(args.Code == Keyboard.Key.Escape)
-                GameScreenManager.Instance.PopScreen();
+                GameScreenManager.PopScreen();
         }
+
+        // ---------------------------------------------
+        // INHERITED MEMBERS
+        // ---------------------------------------------
 
         #region Inherited members
 
@@ -45,7 +49,7 @@
         public override void Dispose()
         {
             this._font.Dispose();
-            GameScreenManager.Instance.RenderWindow.KeyPressed -= this.HandleKeyPress;
+            GameScreenManager.RenderWindow.KeyPressed -= this.HandleKeyPress;
         }
 
         //ActiveEntity
@@ -89,7 +93,7 @@
         //GameScreen
         public override void Initialize()
         {
-            this._windowSize = GameScreenManager.Instance.RenderWindow.Size;
+            this._windowSize = GameScreenManager.RenderWindow.Size;
             this._font = new BitmapFont("Assets/monochromeSimple.png");
         }
 
@@ -107,14 +111,18 @@
 
         #endregion Inherited members
 
+        // ---------------------------------------------
+        // METHODS
+        // ---------------------------------------------
+
         private void DeregisterEvents()
         {
-            GameScreenManager.Instance.RenderWindow.KeyPressed -= this.HandleKeyPress;
+            GameScreenManager.RenderWindow.KeyPressed -= this.HandleKeyPress;
         }
 
         private void RegisterEvents()
         {
-            GameScreenManager.Instance.RenderWindow.KeyPressed += this.HandleKeyPress;
+            GameScreenManager.RenderWindow.KeyPressed += this.HandleKeyPress;
         }
 
         private void ChoiceSelected()
@@ -124,9 +132,9 @@
 
             var choiceText = this._menuOptions[this._selectedOption];
             if(choiceText.Equals(QuitString))
-                GameScreenManager.Instance.Dispose();
+                GameScreenManager.ShutDown();
             if(choiceText.Equals(StartString))
-                GameScreenManager.Instance.PushScreen(new ArenaScreen.ArenaScreen());
+                GameScreenManager.PushScreen(new ArenaScreen.ArenaScreen());
         }
     }
 }

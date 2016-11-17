@@ -12,17 +12,17 @@
         private const float Speed = 3.5f;
 
         private readonly DodgeLineDirection _direction;
-        private readonly Vector2u _screenSize;
         private readonly RectangleShape _lineShape;
         private readonly Player _player;
+        private readonly Vector2u _screenSize;
         private readonly Vector2f _velocity;
+
+        private bool _isCrossed;
+        //which side of the line the player is on. starts at 0 then is either 1 or -1 after the first check
+        private int _playerSide;
 
         public event EventHandler<LineCrossedEventArgs> Crossed;
         public event EventHandler Finished;
-        private bool _isCrossed;
-
-        //which side of the line the player is on. starts at 0 then is either 1 or -1 after the first check
-        private int _playerSide;
 
         public DodgeLine(Vector2u screenSize, Player player)
         {
@@ -67,19 +67,9 @@
             this.IsActive = true; //enable it to move and be detected
         }
 
-        #region Inherited members
-
-        protected override void Activate()
-        {
-            //nothing to do here
-        }
-
-        protected override void Deactivate()
-        {
-            //nothing to do here
-        }
-
-        #endregion Inherited members
+        // ---------------------------------------------
+        // PROPERTIES
+        // ---------------------------------------------
 
         private bool IsFinished
         {
@@ -97,6 +87,30 @@
                 return false;
             }
         }
+
+        // ---------------------------------------------
+        // INHERITED MEMBERS
+        // ---------------------------------------------
+
+        #region Inherited members
+
+        //ActiveEntity
+        protected override void Activate()
+        {
+            //nothing to do here
+        }
+
+        //ActiveEntity
+        protected override void Deactivate()
+        {
+            //nothing to do here
+        }
+
+        #endregion Inherited members
+
+        // ---------------------------------------------
+        // METHODS
+        // ---------------------------------------------
 
         private static DodgeLineDirection GetRandomDirection()
         {
@@ -137,16 +151,6 @@
             }
         }
 
-        private void UpdatePlayerSide()
-        {
-            var first = this.GetPosition1();
-            var second = this.GetPosition2();
-            var offsetToSecond = second - first;
-            var offsetToPlayer = this._player.HitPosition - first;
-            var crossProduct = offsetToSecond.Cross(offsetToPlayer);
-            this._playerSide = crossProduct > 0 ? 1 : -1;
-        }
-
         private Vector2f GetPosition1()
         {
             if (this._direction == DodgeLineDirection.Down || this._direction == DodgeLineDirection.Up)
@@ -159,6 +163,16 @@
             if (this._direction == DodgeLineDirection.Down || this._direction == DodgeLineDirection.Up)
                 return new Vector2f(this._screenSize.X, this._lineShape.Position.Y + LineWidth/2);
             return new Vector2f(this._lineShape.Position.X + LineWidth/2, this._screenSize.Y);
+        }
+
+        private void UpdatePlayerSide()
+        {
+            var first = this.GetPosition1();
+            var second = this.GetPosition2();
+            var offsetToSecond = second - first;
+            var offsetToPlayer = this._player.HitPosition - first;
+            var crossProduct = offsetToSecond.Cross(offsetToPlayer);
+            this._playerSide = crossProduct > 0 ? 1 : -1;
         }
     }
 }

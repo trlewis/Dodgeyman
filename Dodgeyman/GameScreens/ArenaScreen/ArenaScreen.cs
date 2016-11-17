@@ -16,17 +16,23 @@
         private readonly List<DodgeLine> _lines = new List<DodgeLine>();
         private readonly Queue<DodgeLine> _finishedLines = new Queue<DodgeLine>(); //lines to remove from list
         private readonly Clock _arenaClock = new Clock();
-
-        //this is so we don't count an already crossed line every frame
-        //private readonly List<DodgeLine> _crossedLines = new List<DodgeLine>();
         
         private int _lineSpawnTime = 2000; //in milliseconds, goes down as the game goes on
         private int _lastLineSpawnTime; //in milliseconds
         private bool _playerHit;
         private int _score;
         private BitmapFont.BitmapFont _bf;
+
+        // ---------------------------------------------
+        // PROPERTIES
+        // ---------------------------------------------
+
         private RectangleShape ArenaRectangle { get; set; }
         private Player Player { get; set; }
+
+        // ---------------------------------------------
+        // INHERITED MEMBERS
+        // ---------------------------------------------
 
         #region Inherited members
 
@@ -36,7 +42,7 @@
             this.Player.IsActive = true;
             foreach (var line in this._lines)
                 line.IsActive = true;
-            GameScreenManager.Instance.RenderWindow.KeyPressed += this.KeyPressed;
+            GameScreenManager.RenderWindow.KeyPressed += this.KeyPressed;
         }
 
         //ActiveEntity
@@ -45,7 +51,7 @@
             this.Player.IsActive = false;
             foreach (var line in this._lines)
                 line.IsActive = false;
-            GameScreenManager.Instance.RenderWindow.KeyPressed -= this.KeyPressed;
+            GameScreenManager.RenderWindow.KeyPressed -= this.KeyPressed;
         }
 
         //GameScreen
@@ -83,9 +89,13 @@
 
         #endregion Inherited members
 
+        // ---------------------------------------------
+        // METHODS
+        // ---------------------------------------------
+
         private void CreateArena()
         {
-            var screenSize = GameScreenManager.Instance.RenderWindow.Size;
+            var screenSize = GameScreenManager.RenderWindow.Size;
             var width = (float) Math.Floor(screenSize.X*PlayableAreaPercent);
             var height = (float) Math.Floor(screenSize.Y*PlayableAreaPercent);
             var arenaSize = new Vector2f(width, height);
@@ -126,7 +136,7 @@
             if (clockTime - this._lastLineSpawnTime < this._lineSpawnTime)
                 return;
 
-            var windowSize = GameScreenManager.Instance.RenderWindow.Size;
+            var windowSize = GameScreenManager.RenderWindow.Size;
             var dl = new DodgeLine(windowSize, this.Player);
             dl.Crossed += this.LineCrossed;
             dl.Finished += this.LineFinished;
@@ -137,7 +147,7 @@
         private void KeyPressed(object src, KeyEventArgs args)
         {
             if(args.Code == Keyboard.Key.Escape)
-                GameScreenManager.Instance.PopScreen();
+                GameScreenManager.PopScreen();
         }
 
         /// <summary>

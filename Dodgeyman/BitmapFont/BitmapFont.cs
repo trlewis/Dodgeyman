@@ -41,11 +41,39 @@
             this.StringSprite = new Sprite(this._renderTexture.Texture);
         }
 
+        // ---------------------------------------------
+        // PROPERTIES
+        // ---------------------------------------------
+
         /// <summary>
         /// The finished text string that is used to draw.
         /// </summary>
         public Sprite StringSprite { get; private set; }
 
+        // ---------------------------------------------
+        // INHERITED MEMBERS
+        // ---------------------------------------------
+
+        #region Inherited members
+
+        //IDisposable
+        public void Dispose()
+        {
+            if(this._renderTexture != null)
+                this._renderTexture.Dispose();
+            if(this.StringSprite != null)
+                this.StringSprite.Dispose();
+            if(this._sourceTexture != null)
+                this._sourceTexture.Dispose();
+            if(this._sourceImage != null)
+                this._sourceImage.Dispose();
+        }
+
+        #endregion Inherited members
+
+        // ---------------------------------------------
+        // METHODS
+        // ---------------------------------------------
 
         /// <summary>
         /// Renders the given string and updates <see cref="StringSprite"/> to contain the string.
@@ -130,16 +158,5 @@
             this._sourceTexture = new Texture(this._sourceImage);
         }
 
-        public void Dispose()
-        {
-            if(this._renderTexture != null)
-                this._renderTexture.Dispose();
-            if(this.StringSprite != null)
-                this.StringSprite.Dispose();
-            if(this._sourceTexture != null)
-                this._sourceTexture.Dispose();
-            if(this._sourceImage != null)
-                this._sourceImage.Dispose();
-        }
     }
 }
