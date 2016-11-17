@@ -17,8 +17,8 @@
         private readonly Player _player;
         private readonly Vector2f _velocity;
 
-        public EventHandler<LineCrossedEventArgs> Crossed;
-        public EventHandler Finished;
+        public event EventHandler<LineCrossedEventArgs> Crossed;
+        public event EventHandler Finished;
         private bool _isCrossed;
 
         //which side of the line the player is on. starts at 0 then is either 1 or -1 after the first check

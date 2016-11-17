@@ -128,17 +128,8 @@
 
             var windowSize = GameScreenManager.Instance.RenderWindow.Size;
             var dl = new DodgeLine(windowSize, this.Player);
-            dl.Crossed += (sender, args) =>
-            {
-                if (!args.Hit)
-                    this._score++;
-                //TODO: do something if player was hit
-            };
-            dl.Finished += (sender, args) =>
-            {
-                if(sender is DodgeLine)
-                    this._finishedLines.Enqueue(sender as DodgeLine);
-            };
+            dl.Crossed += this.LineCrossed;
+            dl.Finished += this.LineFinished;
             this._lines.Add(dl);
             this._lastLineSpawnTime = clockTime;
         }
@@ -147,6 +138,30 @@
         {
             if(args.Code == Keyboard.Key.Escape)
                 GameScreenManager.Instance.PopScreen();
+        }
+
+        /// <summary>
+        /// Listener for the Crossed event on DodgeLine.
+        /// </summary>
+        /// <param name="sender">The object that's finished. Probably a DodgeLine or object with similar purpose.</param>
+        /// <param name="args"></param>
+        private void LineCrossed(object sender, LineCrossedEventArgs args)
+        {
+            if (!args.Hit)
+                this._score++;
+            //TODO: do something if collision occurred
+        }
+
+        /// <summary>
+        /// Listener for the Finished event on DodgeLine. What to do when a line is "finished". 
+        /// That is, when it is no longer useful. Called by lines as an event.
+        /// </summary>
+        /// <param name="sender">The object that's finished. Probably a DodgeLine or some an object with similar purpose.</param>
+        /// <param name="args">Empty, calling this method is just a signal.</param>
+        private void LineFinished(object sender, EventArgs args)
+        {
+            if(sender is DodgeLine)
+                this._finishedLines.Enqueue(sender as DodgeLine);
         }
 
         private void UpdateLines()
