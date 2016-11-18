@@ -76,19 +76,18 @@
 
         private void CheckCollision()
         {
+            if (this.IsCrossed)
+                return;
+
             var prevSide = this._playerSide;
             this.FindPlayerSide();
-
-            //do nothing and return if the player hasn't crossed the line
             if (prevSide == this._playerSide)
                 return;
 
             var collided = !this.Player.Color.Equals(this._lineShape.FillColor);
-            if (collided || !this.IsCrossed)
-            {
-                this.OnCrossed(new LineCrossedEventArgs(collided));
-                this.IsCrossed = true;
-            }
+            this.OnCrossed(new LineCrossedEventArgs(collided));
+            this.DimShape(this._lineShape);
+            this.IsCrossed = true;
         }
 
         private void FindPlayerSide()

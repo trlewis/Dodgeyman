@@ -72,6 +72,16 @@
         /// </summary>
         public abstract void Update();
 
+        protected void DimShape(Shape shape)
+        {
+            const uint dimFactor = 3;
+            var color = shape.FillColor;
+            var r = (byte)(color.R/dimFactor);
+            var g = (byte)(color.G/dimFactor);
+            var b = (byte)(color.B/dimFactor);
+            shape.FillColor = new Color(r, g, b, 0xFF);
+        }
+
         protected void OnCrossed(LineCrossedEventArgs args)
         {
             this.Crossed.SafeInvoke(this, args);

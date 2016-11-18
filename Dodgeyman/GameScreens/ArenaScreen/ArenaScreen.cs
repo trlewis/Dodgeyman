@@ -17,7 +17,7 @@
         private readonly Queue<DodgeLine> _finishedLines = new Queue<DodgeLine>(); //lines to remove from list
         private readonly Clock _arenaClock = new Clock();
         
-        private int _lineSpawnTime = 2000; //in milliseconds, goes down as the game goes on
+        private int _lineSpawnTime = 1300; //in milliseconds, goes down as the game goes on
         private int _lastLineSpawnTime; //in milliseconds
         private bool _playerHit;
         private int _score;
@@ -60,6 +60,7 @@
             target.Draw(this.ArenaRectangle);
             target.Draw(this.Player.PlayerSprite);
             this.DrawScore(target);
+            //this.DrawSpawnTime(target);
 
             foreach (var line in this._lines)
                 line.Draw(target);
@@ -119,6 +120,16 @@
             this.Player = new Player(arenaBounds);
         }
 
+        private void DrawSpawnTime(RenderTarget target)
+        {
+            var text = this._lineSpawnTime.ToString(CultureInfo.InvariantCulture);
+            if (this._playerHit)
+                text = "0 " + text;
+            this._bf.RenderText(text);
+            this._bf.StringSprite.Position = new Vector2f(0, 0);
+            target.Draw(this._bf.StringSprite);
+        }
+
         private void DrawScore(RenderTarget target)
         {
             this._bf.RenderText(this._score.ToString(CultureInfo.InvariantCulture));
@@ -156,9 +167,17 @@
         /// <param name="args"></param>
         private void LineCrossed(object sender, LineCrossedEventArgs args)
         {
-            if (!args.Hit)
+            if (!args.Hit && !this._playerHit)
+            {
                 this._score++;
-            //TODO: do something if collision occurred
+                var timeReduction = 100f/Math.Sqrt(this._score);
+                //this._lineSpawnTime = (int)Math.Max(this._lineSpawnTime - timeReduction, 400);
+                var newSpawnTime = (int)Math.Max(this._lineSpawnTime - timeReduction, 400);
+                //let it bring it down by 1ms after it hits "minimum"
+                this._lineSpawnTime = (this._lineSpawnTime == newSpawnTime) ? this._lineSpawnTime - 1 : newSpawnTime;
+            }
+            else
+                this._playerHit = true;
         }
 
         /// <summary>

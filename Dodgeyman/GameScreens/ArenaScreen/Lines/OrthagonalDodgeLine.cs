@@ -123,16 +123,18 @@
 
         private void CheckCollision()
         {
+            if (this.IsCrossed)
+                return;
+
             var prevSide = this._playerSide;
             this.UpdatePlayerSide();
+            if (this._playerSide == prevSide) 
+                return;
 
-            if(this._playerSide != prevSide)
-            {
-                var collided = !this._lineShape.FillColor.Equals(this.Player.Color);
-                if(collided || !this.IsCrossed) //only count scoring crosses once, count collisions all the time
-                    this.OnCrossed(new LineCrossedEventArgs(collided));
-                this.IsCrossed = true;
-            }
+            var collided = !this._lineShape.FillColor.Equals(this.Player.Color);
+            this.OnCrossed(new LineCrossedEventArgs(collided));
+            this.DimShape(this._lineShape);
+            this.IsCrossed = true;
         }
 
         private Vector2f GetPosition1()
