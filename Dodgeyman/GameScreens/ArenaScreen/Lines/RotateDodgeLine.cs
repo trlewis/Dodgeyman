@@ -12,7 +12,6 @@
         private readonly LineShape _lineShape;
         private readonly float _angularVelocity;
         private int _playerSide;
-        private bool _isCrossed;
 
         public RotateDodgeLine(Player player)
             : base(player)
@@ -85,10 +84,10 @@
                 return;
 
             var collided = !this.Player.Color.Equals(this._lineShape.FillColor);
-            if (collided || !this._isCrossed)
+            if (collided || !this.IsCrossed)
             {
                 this.OnCrossed(new LineCrossedEventArgs(collided));
-                this._isCrossed = true;
+                this.IsCrossed = true;
             }
         }
 

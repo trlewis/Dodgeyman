@@ -136,8 +136,7 @@
             if (clockTime - this._lastLineSpawnTime < this._lineSpawnTime)
                 return;
 
-            //var dl = new OrthagonalDodgeLine(this.Player);
-            var dl = new RotateDodgeLine(this.Player);
+            var dl = DodgeLineGenerator.GenerateLine(this.Player);
             dl.Crossed += this.LineCrossed;
             dl.Finished += this.LineFinished;
             this._lines.Add(dl);

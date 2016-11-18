@@ -29,10 +29,24 @@
             this.Player = player;
         }
 
+        // ---------------------------------------------
+        // PROPERTIES
+        // ---------------------------------------------
+
         /// <summary>
         /// The Player that is trying to dodge the line. Used for collision detection.
         /// </summary>
         protected Player Player { get; private set; }
+
+        /// <summary>
+        /// Whether or not the player has crossed the line yet. A true value does not mean
+        /// a killing collision occurred, but it does mean the opportunity to score a point has passed.
+        /// </summary>
+        protected bool IsCrossed { get; set; }
+
+        // ---------------------------------------------
+        // INHERITED MEMBERS
+        // ---------------------------------------------
 
         #region Inherited members
 
@@ -42,6 +56,10 @@
         protected override void Deactivate() { }
 
         #endregion Inherited members
+
+        // ---------------------------------------------
+        // METHODS
+        // ---------------------------------------------
 
         /// <summary>
         /// Draws the line to the specified target.

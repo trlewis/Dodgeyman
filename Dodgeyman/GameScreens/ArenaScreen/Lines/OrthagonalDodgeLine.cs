@@ -17,7 +17,6 @@
         private readonly Vector2u _screenSize;
         private readonly Vector2f _velocity;
 
-        private bool _isCrossed;
         //which side of the line the player is on. starts at 0 then is either 1 or -1 after the first check
         private int _playerSide;
 
@@ -130,9 +129,9 @@
             if(this._playerSide != prevSide)
             {
                 var collided = !this._lineShape.FillColor.Equals(this.Player.Color);
-                if(collided || !this._isCrossed) //only count scoring crosses once, count collisions all the time
+                if(collided || !this.IsCrossed) //only count scoring crosses once, count collisions all the time
                     this.OnCrossed(new LineCrossedEventArgs(collided));
-                this._isCrossed = true;
+                this.IsCrossed = true;
             }
         }
 
