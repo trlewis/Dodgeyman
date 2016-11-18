@@ -7,6 +7,8 @@
 
     abstract class DodgeLine : ActiveEntity
     {
+        protected const float LineThickness = 2f;
+
         /// <summary>
         /// Event that fires if the player crosses the line. May or may not mean that
         /// the player was killed.

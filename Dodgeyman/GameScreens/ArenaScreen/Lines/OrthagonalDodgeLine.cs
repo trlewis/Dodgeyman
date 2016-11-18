@@ -10,7 +10,6 @@
     /// </summary>
     internal class OrthagonalDodgeLine : DodgeLine
     {
-        private const float LineWidth = 2f;
         private const float Speed = 3.5f;
 
         private readonly OrthagonalDodgeLineDirection _direction;
@@ -33,16 +32,16 @@
             if(this._direction == OrthagonalDodgeLineDirection.Down || this._direction == OrthagonalDodgeLineDirection.Right)
                 pos = new Vector2f(0, 0);
             else if(this._direction == OrthagonalDodgeLineDirection.Left)
-                pos = new Vector2f(this._screenSize.X - LineWidth, 0);
+                pos = new Vector2f(this._screenSize.X - LineThickness, 0);
             else
-                pos = new Vector2f(0, this._screenSize.Y - LineWidth);                
+                pos = new Vector2f(0, this._screenSize.Y - LineThickness);                
 
             //initialize size and speed
             Vector2f size;
             if (this._direction == OrthagonalDodgeLineDirection.Left || this._direction == OrthagonalDodgeLineDirection.Right)
-                size = new Vector2f(LineWidth, this._screenSize.Y);
+                size = new Vector2f(LineThickness, this._screenSize.Y);
             else
-                size = new Vector2f(this._screenSize.X, LineWidth);
+                size = new Vector2f(this._screenSize.X, LineThickness);
 
             //initialize velocity
             if(this._direction == OrthagonalDodgeLineDirection.Right)
@@ -75,11 +74,11 @@
             {
                 if (this._direction == OrthagonalDodgeLineDirection.Down && this._lineShape.Position.Y > this._screenSize.Y)
                     return true;
-                if (this._direction == OrthagonalDodgeLineDirection.Left && (this._lineShape.Position.X + LineWidth) < 0)
+                if (this._direction == OrthagonalDodgeLineDirection.Left && (this._lineShape.Position.X + LineThickness) < 0)
                     return true;
                 if (this._direction == OrthagonalDodgeLineDirection.Right && this._lineShape.Position.X > this._screenSize.X)
                     return true;
-                if (this._direction == OrthagonalDodgeLineDirection.Up && (this._lineShape.Position.Y + LineWidth) < 0)
+                if (this._direction == OrthagonalDodgeLineDirection.Up && (this._lineShape.Position.Y + LineThickness) < 0)
                     return true;
 
                 return false;
@@ -140,15 +139,15 @@
         private Vector2f GetPosition1()
         {
             if (this._direction == OrthagonalDodgeLineDirection.Down || this._direction == OrthagonalDodgeLineDirection.Up)
-                return new Vector2f(0, this._lineShape.Position.Y + LineWidth/2);
-            return new Vector2f(this._lineShape.Position.X + LineWidth/2, 0);
+                return new Vector2f(0, this._lineShape.Position.Y + LineThickness/2);
+            return new Vector2f(this._lineShape.Position.X + LineThickness/2, 0);
         }
 
         private Vector2f GetPosition2()
         {
             if (this._direction == OrthagonalDodgeLineDirection.Down || this._direction == OrthagonalDodgeLineDirection.Up)
-                return new Vector2f(this._screenSize.X, this._lineShape.Position.Y + LineWidth/2);
-            return new Vector2f(this._lineShape.Position.X + LineWidth/2, this._screenSize.Y);
+                return new Vector2f(this._screenSize.X, this._lineShape.Position.Y + LineThickness/2);
+            return new Vector2f(this._lineShape.Position.X + LineThickness/2, this._screenSize.Y);
         }
 
         private void UpdatePlayerSide()

@@ -21,6 +21,16 @@
         // PROPERTIES
         // ---------------------------------------------
 
+        public Vector2f GlobalPoint1
+        {
+            get { return this.Transform*this.GetPoint(0); }
+        }
+
+        public Vector2f GlobalPoint2
+        {
+            get { return this.Transform*this.Offset; }
+        }
+
         /// <summary>
         /// The offset of the second point from the first. LineShapes are always 
         /// created with the first point at 0,0.
