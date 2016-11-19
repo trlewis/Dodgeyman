@@ -59,8 +59,6 @@
 
             //initialize side for collision detection
             this.UpdatePlayerSide();
-
-            this.IsActive = true; //enable it to move and be detected
         }
 
         // ---------------------------------------------

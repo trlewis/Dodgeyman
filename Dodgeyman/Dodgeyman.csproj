@@ -64,6 +64,7 @@
     <Compile Include="Code\Extensions\EventHandlerExtensions.cs" />
     <Compile Include="Code\Extensions\Vector2fExtensions.cs" />
     <Compile Include="GameScreens\ArenaScreen\ArenaScreen.cs" />
+    <Compile Include="GameScreens\ArenaScreen\GameOverPanel.cs" />
     <Compile Include="GameScreens\ArenaScreen\Lines\DodgeLine.cs" />
     <Compile Include="GameScreens\ArenaScreen\Lines\DodgeLineGenerator.cs" />
     <Compile Include="GameScreens\ArenaScreen\Lines\OrthagonalDodgeLine.cs" />

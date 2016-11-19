@@ -19,7 +19,8 @@
         
         private int _lineSpawnTime = 1300; //in milliseconds, goes down as the game goes on
         private int _lastLineSpawnTime; //in milliseconds
-        private bool _playerHit;
+        private bool _gameOver;
+        private GameOverPanel _gameoverPanel;
         private int _score;
         private BitmapFont.BitmapFont _bf;
 
@@ -35,6 +36,14 @@
         // ---------------------------------------------
 
         #region Inherited members
+
+        //IDisposable
+        public override void Dispose()
+        {
+            this.IsActive = false;
+            this._bf.Dispose();
+            //TODO: dispose player and lines
+        }
 
         //ActiveEntity
         protected override void Activate()
@@ -58,12 +67,15 @@
         public override void Draw(RenderTarget target)
         {
             target.Draw(this.ArenaRectangle);
-            target.Draw(this.Player.PlayerSprite);
             this.DrawScore(target);
-            //this.DrawSpawnTime(target);
 
             foreach (var line in this._lines)
                 line.Draw(target);
+
+            target.Draw(this.Player.PlayerSprite);
+
+            if (this._gameOver && this._gameoverPanel != null)
+                this._gameoverPanel.Draw(target);
         }
 
         //GameScreen
@@ -84,9 +96,14 @@
         //GameScreen
         public override void Update(Time time)
         {
-            this.Player.Update();
-            this.HandleLineSpawning();
-            this.UpdateLines();
+            if (!this._gameOver)
+            {
+                this.Player.Update();
+                this.HandleLineSpawning();
+                this.UpdateLines();
+            }
+            else if (this._gameOver && this._gameoverPanel != null)
+                this._gameoverPanel.Update();
         }
 
         #endregion Inherited members
@@ -125,7 +142,7 @@
         private void DrawSpawnTime(RenderTarget target)
         {
             var text = this._lineSpawnTime.ToString(CultureInfo.InvariantCulture);
-            if (this._playerHit)
+            if (this._gameOver)
                 text = "0 " + text;
             this._bf.RenderText(text);
             this._bf.StringSprite.Position = new Vector2f(0, 0);
@@ -143,6 +160,16 @@
             target.Draw(this._bf.StringSprite);
         }
 
+        private void GameOver()
+        {
+            this._gameOver = true;
+            this.SetScoreTint();
+            foreach (var line in this._lines)
+                line.IsActive = false;
+            this.Player.IsActive = false;
+            this._gameoverPanel = new GameOverPanel();
+        }
+
         private void HandleLineSpawning()
         {
             var clockTime = this._arenaClock.ElapsedTime.AsMilliseconds();
@@ -158,8 +185,15 @@
 
         private void KeyPressed(object src, KeyEventArgs args)
         {
-            if(args.Code == Keyboard.Key.Escape)
+            if (args.Code == Keyboard.Key.Escape)
+            {
                 GameScreenManager.PopScreen();
+            }
+            if(args.Code == Keyboard.Key.Return && this._gameOver)
+            {
+                GameScreenManager.PopScreen();
+                GameScreenManager.PushScreen(new ArenaScreen());
+            }
         }
 
         /// <summary>
@@ -169,7 +203,7 @@
         /// <param name="args"></param>
         private void LineCrossed(object sender, LineCrossedEventArgs args)
         {
-            if (!args.Hit && !this._playerHit)
+            if (!args.Hit && !this._gameOver)
             {
                 this._score++;
                 var timeReduction = 100f / Math.Sqrt(this._score);
@@ -180,8 +214,7 @@
             }
             else
             {
-                this._playerHit = true;
-                this.SetScoreTint();
+                this.GameOver();
             }
         }
 
@@ -200,7 +233,7 @@
         private void SetScoreTint()
         {
             //var pc = this.Player.Color;
-            var pc = this._playerHit ? Color.White : this.Player.Color;
+            var pc = this._gameOver ? Color.White : this.Player.Color;
             //red tints a little darker than cyan, so adjust for that
             var alpha = (byte)(pc.Equals(Color.Red) ? 0x44 : 0x33);
             this._bf.StringSprite.Color = new Color(pc.R, pc.G, pc.B, alpha);

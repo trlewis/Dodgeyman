@@ -27,6 +27,7 @@
         protected DodgeLine(Player player)
         {
             this.Player = player;
+            this.IsActive = true;
         }
 
         // ---------------------------------------------

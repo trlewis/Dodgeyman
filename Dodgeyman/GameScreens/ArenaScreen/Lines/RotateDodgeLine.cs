@@ -54,13 +54,18 @@
 
         #region Inherited Members
 
+        // DodgeLine
         public override void Draw(RenderTarget target)
         {
             target.Draw(this._lineShape);
         }
 
+        // DodgeLine
         public override void Update()
         {
+            if (!this.IsActive)
+                return;
+
             this._lineShape.Rotation += this._angularVelocity;
             this.CheckCollision();
 
