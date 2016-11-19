@@ -60,6 +60,12 @@
             target.Draw(this._lineShape);
         }
 
+        // IDisposable
+        public override void Dispose()
+        {
+            this._lineShape.Dispose();
+        }
+
         // DodgeLine
         public override void Update()
         {

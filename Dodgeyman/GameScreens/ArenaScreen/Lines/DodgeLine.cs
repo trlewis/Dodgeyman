@@ -5,7 +5,7 @@
     using Models;
     using SFML.Graphics;
 
-    abstract class DodgeLine : ActiveEntity
+    abstract class DodgeLine : ActiveEntity, IDisposable
     {
         protected const float LineThickness = 2f;
 
@@ -51,11 +51,14 @@
 
         #region Inherited members
 
+        // IDisposable
+        public abstract void Dispose();
+
         //DodgeLines don't subscribe to any events, so these do nothing. But
         //they still need to know if they're active or not for their update methods
-        protected override void Activate() { }
-        protected override void Deactivate() { }
-
+        protected override void Activate() { } // ActiveEntity
+        protected override void Deactivate() { } // ActiveEntity
+        
         #endregion Inherited members
 
         // ---------------------------------------------

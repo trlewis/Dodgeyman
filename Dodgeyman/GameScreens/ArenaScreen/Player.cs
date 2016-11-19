@@ -7,7 +7,7 @@
     using SFML.System;
     using SFML.Window;
 
-    internal class Player : ActiveEntity
+    internal class Player : ActiveEntity, IDisposable
     {
         private const float PlayerSize = 3f;
         private const float Speed = 2.25f;
@@ -39,15 +39,21 @@
         // ---------------------------------------------
 
         #region Inherited members
+        
+        // IDisposable
+        public void Dispose()
+        {
+            this.PlayerSprite.Dispose();
+        }
 
-        //ActiveEntity
+        // ActiveEntity
         protected override void Activate()
         {
             GameScreenManager.RenderWindow.KeyPressed += this.KeyPressed;
             GameScreenManager.RenderWindow.KeyReleased += this.KeyReleased;
         }
 
-        //ActiveEntity
+        // ActiveEntity
         protected override void Deactivate()
         {
             GameScreenManager.RenderWindow.KeyPressed -= this.KeyPressed;

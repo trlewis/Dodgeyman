@@ -88,6 +88,7 @@
 
         #region Inherited members
 
+        // DodgeLine
         public override void Update()
         {
             if (!this.IsActive)
@@ -101,6 +102,13 @@
             this.CheckCollision();
         }
 
+        // IDisposable
+        public override void Dispose()
+        {
+            this._lineShape.Dispose();
+        }
+
+        // DodgeLine
         public override void Draw(RenderTarget target)
         {
             target.Draw(this._lineShape);

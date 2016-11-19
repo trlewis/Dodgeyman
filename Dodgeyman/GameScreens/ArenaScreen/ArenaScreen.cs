@@ -37,15 +37,17 @@
 
         #region Inherited members
 
-        //IDisposable
+        // IDisposable
         public override void Dispose()
         {
             this.IsActive = false;
             this._bf.Dispose();
-            //TODO: dispose player and lines
+            foreach (var line in this._lines)
+                line.Dispose();
+            this.Player.Dispose();
         }
 
-        //ActiveEntity
+        // ActiveEntity
         protected override void Activate()
         {
             this.Player.IsActive = true;
@@ -54,7 +56,7 @@
             GameScreenManager.RenderWindow.KeyPressed += this.KeyPressed;
         }
 
-        //ActiveEntity
+        // ActiveEntity
         protected override void Deactivate()
         {
             this.Player.IsActive = false;
@@ -63,7 +65,7 @@
             GameScreenManager.RenderWindow.KeyPressed -= this.KeyPressed;
         }
 
-        //GameScreen
+        // GameScreen
         public override void Draw(RenderTarget target)
         {
             target.Draw(this.ArenaRectangle);
@@ -78,7 +80,7 @@
                 this._gameoverPanel.Draw(target);
         }
 
-        //GameScreen
+        // GameScreen
         public override void Initialize()
         {
             this.CreateArena();
@@ -93,7 +95,7 @@
             this._lastLineSpawnTime = clockTime.AsMilliseconds();
         }
 
-        //GameScreen
+        // GameScreen
         public override void Update(Time time)
         {
             if (!this._gameOver)
