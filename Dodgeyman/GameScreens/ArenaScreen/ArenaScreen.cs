@@ -75,6 +75,7 @@
             this._bf = new BitmapFont.BitmapFont("Assets/5x5numbers.png");
             this._bf.StringSprite.Scale = new Vector2f(ScoreScale, ScoreScale);
             this._bf.StringSprite.Color = new Color(0xFF, 0xFF, 0xFF, 0x33);
+            this.SetScoreTint();
 
             var clockTime = this._arenaClock.ElapsedTime;
             this._lastLineSpawnTime = clockTime.AsMilliseconds();
@@ -118,6 +119,7 @@
                 this.ArenaRectangle.Size.X,
                 this.ArenaRectangle.Size.Y);
             this.Player = new Player(arenaBounds);
+            this.Player.ColorChanged += (sender, args) => this.SetScoreTint();
         }
 
         private void DrawSpawnTime(RenderTarget target)
@@ -170,14 +172,17 @@
             if (!args.Hit && !this._playerHit)
             {
                 this._score++;
-                var timeReduction = 100f/Math.Sqrt(this._score);
+                var timeReduction = 100f / Math.Sqrt(this._score);
                 //this._lineSpawnTime = (int)Math.Max(this._lineSpawnTime - timeReduction, 400);
                 var newSpawnTime = (int)Math.Max(this._lineSpawnTime - timeReduction, 400);
                 //let it bring it down by 1ms after it hits "minimum"
                 this._lineSpawnTime = (this._lineSpawnTime == newSpawnTime) ? this._lineSpawnTime - 1 : newSpawnTime;
             }
             else
+            {
                 this._playerHit = true;
+                this.SetScoreTint();
+            }
         }
 
         /// <summary>
@@ -190,6 +195,15 @@
         {
             if(sender is DodgeLine)
                 this._finishedLines.Enqueue(sender as DodgeLine);
+        }
+
+        private void SetScoreTint()
+        {
+            //var pc = this.Player.Color;
+            var pc = this._playerHit ? Color.White : this.Player.Color;
+            //red tints a little darker than cyan, so adjust for that
+            var alpha = (byte)(pc.Equals(Color.Red) ? 0x44 : 0x33);
+            this._bf.StringSprite.Color = new Color(pc.R, pc.G, pc.B, alpha);
         }
 
         private void UpdateLines()

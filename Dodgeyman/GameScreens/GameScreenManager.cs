@@ -82,6 +82,7 @@
             var contextSettings = new ContextSettings { DepthBits = 24 };
             _window = new RenderWindow(new VideoMode(600, 600), "Dodgeyman", Styles.Close | Styles.Titlebar, contextSettings);
             _window.SetActive();
+            _window.SetKeyRepeatEnabled(false);
             _window.Closed += (sender, args) => ShutDown();
         }
 

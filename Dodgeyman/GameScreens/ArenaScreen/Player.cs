@@ -1,5 +1,7 @@
 ﻿namespace Dodgeyman.GameScreens.ArenaScreen
 {
+    using System;
+    using Code.Extensions;
     using Models;
     using SFML.Graphics;
     using SFML.System;
@@ -17,6 +19,8 @@
         private bool _movingRight;
         private bool _movingUp;
         private Vector2f _velocity;
+
+        public event EventHandler ColorChanged;
 
         public Player(FloatRect arenaBounds)
         {
@@ -104,10 +108,7 @@
                     this._movingRight = true;
                     break;
                 case Keyboard.Key.Z:
-                    this.PlayerSprite.FillColor = Color.Cyan;
-                    break;
-                case Keyboard.Key.X:
-                    this.PlayerSprite.FillColor = Color.Red;
+                    this.ToggleColor();
                     break;
             }
         }
@@ -129,6 +130,15 @@
                     this._movingRight = false;
                     break;
             }
+        }
+
+        private void ToggleColor()
+        {
+            if (this.PlayerSprite.FillColor.Equals(Color.Cyan))
+                this.PlayerSprite.FillColor = Color.Red;
+            else
+                this.PlayerSprite.FillColor = Color.Cyan;
+            this.ColorChanged.SafeInvoke(this, EventArgs.Empty);
         }
 
         private void UpdatePosition()
