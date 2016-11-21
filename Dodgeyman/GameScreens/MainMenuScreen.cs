@@ -1,7 +1,7 @@
 ﻿namespace Dodgeyman.GameScreens
 {
     using System;
-    using BitmapFont;
+    using Font;
     using SFML.Graphics;
     using SFML.System;
     using SFML.Window;

@@ -1,4 +1,4 @@
-﻿namespace Dodgeyman.BitmapFont
+﻿namespace Dodgeyman.Font
 {
     using System;
     using SFML.Graphics;

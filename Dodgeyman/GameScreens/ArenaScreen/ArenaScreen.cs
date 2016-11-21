@@ -3,6 +3,7 @@
     using System;
     using System.Collections.Generic;
     using System.Globalization;
+    using Font;
     using Lines;
     using SFML.Graphics;
     using SFML.System;
@@ -22,7 +23,7 @@
         private bool _gameOver;
         private GameOverPanel _gameoverPanel;
         private int _score;
-        private BitmapFont.BitmapFont _bf;
+        private BitmapFont _bf;
 
         // ---------------------------------------------
         // PROPERTIES
@@ -86,7 +87,7 @@
             this.CreateArena();
             this.CreatePlayer();
 
-            this._bf = new BitmapFont.BitmapFont("Assets/5x5numbers.png");
+            this._bf = new BitmapFont("Assets/5x5numbers.png");
             this._bf.StringSprite.Scale = new Vector2f(ScoreScale, ScoreScale);
             this._bf.StringSprite.Color = new Color(0xFF, 0xFF, 0xFF, 0x33);
             this.SetScoreTint();
