@@ -1,6 +1,7 @@
 ﻿namespace Dodgeyman.GameScreens
 {
     using System.Collections.Generic;
+    using Models.Stats;
     using SFML.Graphics;
     using SFML.System;
     using SFML.Window;
@@ -77,6 +78,7 @@
             if (_isInitialized)
                 return;
 
+            GameStats.Initialize();
             IsRunning = true;
 
             var contextSettings = new ContextSettings { DepthBits = 24 };
@@ -134,6 +136,7 @@
 
             _window.SetActive(false);
             _window.Close();
+            GameStats.WriteStats();
             IsRunning = false;
         }
 

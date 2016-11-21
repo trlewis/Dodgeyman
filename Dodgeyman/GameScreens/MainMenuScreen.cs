@@ -2,6 +2,7 @@
 {
     using System;
     using Font;
+    using Models.Stats;
     using SFML.Graphics;
     using SFML.System;
     using SFML.Window;
@@ -14,8 +15,8 @@
         private const string StartString = "Start";
         private const string StatsString = "Stats";
 
+        private static readonly Vector2f _titleScale = new Vector2f(4, 4);
         private readonly String[] _menuOptions = {StartString, QuitString};
-        private readonly Vector2f _titleScale = new Vector2f(4, 4);
 
         private float _bounceOffset;
         private BitmapFont _font;
@@ -69,11 +70,22 @@
         {
             // draw title
             this._font.RenderText("Dodgeyman");
-            this._font.StringSprite.Scale = this._titleScale;
+            this._font.StringSprite.Scale = _titleScale;
             Sprite titleSprite = this._font.StringSprite;
-            var titleWidth = titleSprite.TextureRect.Width*this._titleScale.X;
+            var titleWidth = titleSprite.TextureRect.Width*_titleScale.X;
             titleSprite.Position = new Vector2f((this._windowSize.X - titleWidth)/2, 20);
             target.Draw(titleSprite);
+
+            // draw high score
+            if (GameStats.Instance.HasStats)
+            {
+                this._font.RenderText(String.Format("High Score: {0}", GameStats.Instance.HighScore));
+                this._font.StringSprite.Scale = new Vector2f(1, 1);
+                var scoreWidth = this._font.StringSprite.TextureRect.Width*this._font.StringSprite.Scale.X;
+                float scoreY = titleSprite.Position.Y + (titleSprite.TextureRect.Height*_titleScale.Y) + 30;
+                this._font.StringSprite.Position = new Vector2f((this._windowSize.X - scoreWidth)/2, scoreY);
+                target.Draw(this._font.StringSprite);
+            }
 
             // draw menu options
             this._font.StringSprite.Scale = new Vector2f(1, 1);
@@ -95,6 +107,11 @@
         {
             this._windowSize = GameScreenManager.RenderWindow.Size;
             this._font = new BitmapFont("Assets/monochromeSimple.png");
+            GameStats.Initialize();
+            //if (GameStats.Instance.HasStats)
+            //    this._menuOptions = new[] { StartString, StatsString, QuitString };
+            //else
+            //    this._menuOptions = new[] { StartString, QuitString };
         }
 
         //GameScreen

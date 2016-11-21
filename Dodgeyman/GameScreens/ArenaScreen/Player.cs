@@ -21,6 +21,7 @@
         private Vector2f _velocity;
 
         public event EventHandler ColorChanged;
+        public event EventHandler<int> PlayerMoved;
 
         public Player(FloatRect arenaBounds)
         {
@@ -94,6 +95,8 @@
 
         public void Update()
         {
+            if (!this.IsActive)
+                return;
             this.UpdatePosition();
         }
 
@@ -140,10 +143,10 @@
 
         private void ToggleColor()
         {
-            if (this.PlayerSprite.FillColor.Equals(Color.Cyan))
-                this.PlayerSprite.FillColor = Color.Red;
-            else
-                this.PlayerSprite.FillColor = Color.Cyan;
+            if (!this.IsActive)
+                return;
+
+            this.PlayerSprite.FillColor = this.PlayerSprite.FillColor.Equals(Color.Cyan) ? Color.Red : Color.Cyan;
             this.ColorChanged.SafeInvoke(this, EventArgs.Empty);
         }
 
@@ -159,6 +162,7 @@
 
             //keep player inside arena. Might want to create some extensions or custom classes/structs to handle all
             //this adding properties together stuff. i'd rather say if player.right > arenabounds.right
+            var oldPosition = this.PlayerSprite.Position;
             var pos = this.PlayerSprite.Position;
             if (this.PlayerRight > this._arenaBounds.Left + this._arenaBounds.Width)
                 pos.X = this._arenaBounds.Left + this._arenaBounds.Width - this.PlayerSprite.Size.X;
@@ -170,6 +174,12 @@
             else if (this.PlayerTop < this._arenaBounds.Top)
                 pos.Y = this._arenaBounds.Top;
             this.PlayerSprite.Position = pos;
+
+            if (oldPosition != pos)
+            {
+                var px = (int) ((oldPosition - pos).Magnitude());
+                this.PlayerMoved.SafeInvoke(this, px);
+            }
         }
     }
 }

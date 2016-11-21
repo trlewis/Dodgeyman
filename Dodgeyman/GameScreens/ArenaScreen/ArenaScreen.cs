@@ -5,6 +5,7 @@
     using System.Globalization;
     using Font;
     using Lines;
+    using Models.Stats;
     using SFML.Graphics;
     using SFML.System;
     using SFML.Window;
@@ -22,8 +23,8 @@
         private int _lastLineSpawnTime; //in milliseconds
         private bool _gameOver;
         private GameOverPanel _gameoverPanel;
-        private int _score;
         private BitmapFont _bf;
+        private readonly SessionStats _stats = new SessionStats();
 
         // ---------------------------------------------
         // PROPERTIES
@@ -139,7 +140,12 @@
                 this.ArenaRectangle.Size.X,
                 this.ArenaRectangle.Size.Y);
             this.Player = new Player(arenaBounds);
-            this.Player.ColorChanged += (sender, args) => this.SetScoreTint();
+            this.Player.ColorChanged += (sender, args) =>
+            {
+                this.SetScoreTint();
+                this._stats.ColorSwitches++;
+            };
+            this.Player.PlayerMoved += (sender, i) => this._stats.PixelsMoved += i;
         }
 
         private void DrawSpawnTime(RenderTarget target)
@@ -154,7 +160,7 @@
 
         private void DrawScore(RenderTarget target)
         {
-            this._bf.RenderText(this._score.ToString(CultureInfo.InvariantCulture));
+            this._bf.RenderText(this._stats.Score.ToString(CultureInfo.InvariantCulture));
             var textWidth = this._bf.StringSprite.TextureRect.Width*this._bf.StringSprite.Scale.X;
             var textHeight = this._bf.StringSprite.TextureRect.Height*this._bf.StringSprite.Scale.Y;
             var x = (target.Size.X - textWidth)/2;
@@ -170,6 +176,8 @@
             foreach (var line in this._lines)
                 line.IsActive = false;
             this.Player.IsActive = false;
+            GameStats.Initialize();
+            GameStats.Instance.AddSessionStats(this._stats);
             this._gameoverPanel = new GameOverPanel();
         }
 
@@ -208,12 +216,12 @@
         {
             if (!args.Hit && !this._gameOver)
             {
-                this._score++;
-                var timeReduction = 100f / Math.Sqrt(this._score);
-                //this._lineSpawnTime = (int)Math.Max(this._lineSpawnTime - timeReduction, 400);
-                var newSpawnTime = (int)Math.Max(this._lineSpawnTime - timeReduction, 400);
+                this._stats.Score++;
+                var timeReduction = 100f / Math.Sqrt(this._stats.Score);
+                const int minSpawnTime = 400;
+                var newSpawnTime = (int)Math.Max(this._lineSpawnTime - timeReduction, minSpawnTime);
                 //let it bring it down by 1ms after it hits "minimum"
-                this._lineSpawnTime = (this._lineSpawnTime == newSpawnTime) ? this._lineSpawnTime - 1 : newSpawnTime;
+                this._lineSpawnTime = (this._lineSpawnTime <= minSpawnTime) ? this._lineSpawnTime - 1 : newSpawnTime;
             }
             else
             {
@@ -235,7 +243,6 @@
 
         private void SetScoreTint()
         {
-            //var pc = this.Player.Color;
             var pc = this._gameOver ? Color.White : this.Player.Color;
             //red tints a little darker than cyan, so adjust for that
             var alpha = (byte)(pc.Equals(Color.Red) ? 0x44 : 0x33);

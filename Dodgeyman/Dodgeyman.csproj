@@ -60,7 +60,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="BitmapFont\BitmapFont.cs" />
+    <Compile Include="Font\BitmapFont.cs" />
     <Compile Include="Code\Extensions\EventHandlerExtensions.cs" />
     <Compile Include="Code\Extensions\Vector2fExtensions.cs" />
     <Compile Include="GameScreens\ArenaScreen\ArenaScreen.cs" />
@@ -77,6 +77,8 @@
     <Compile Include="GameScreens\MainMenuScreen.cs" />
     <Compile Include="Models\ActiveEntity.cs" />
     <Compile Include="Models\LineShape.cs" />
+    <Compile Include="Models\Stats\GameStats.cs" />
+    <Compile Include="Models\Stats\SessionStats.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
