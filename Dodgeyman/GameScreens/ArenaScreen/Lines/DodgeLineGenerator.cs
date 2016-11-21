@@ -9,11 +9,16 @@
         //not sure yet if this class will be necessary or not.
         public static DodgeLine GenerateLine(Player player)
         {
-            var val = Rand.Next()%2;
+            //TODO: use the random generator of this class to pick colors/sides for the lines
+            var val = Rand.Next() % 3;
             if (val == 0)
                 return new OrthagonalDodgeLine(player);
-            else
+            if(val == 1)
                 return new RotateDodgeLine(player);
+            if(val == 2)
+                return new DiagonalDodgeLine(player);
+
+            return new OrthagonalDodgeLine(player);
         }
     }
 }
