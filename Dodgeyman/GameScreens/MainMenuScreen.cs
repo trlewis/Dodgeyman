@@ -6,6 +6,7 @@
     using SFML.Graphics;
     using SFML.System;
     using SFML.Window;
+    using Stats;
 
     internal class MainMenuScreen : GameScreen
     {

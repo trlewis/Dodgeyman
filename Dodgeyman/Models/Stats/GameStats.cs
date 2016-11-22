@@ -85,6 +85,7 @@
         // ---------------------------------------------
         // PROPERTIES
         // ---------------------------------------------
+
         public double AveragePixelsMoved { get; private set; }
 
         public double AverageScore { get; private set; }
@@ -102,7 +103,7 @@
         public int TotalScore { get; private set; }
 
         /// <summary>
-        /// used internally to get other specific stats.
+        /// Used internally for more getting more complex information
         /// </summary>
         private IList<SessionStats> SessionStats { get; set; }
 
@@ -116,6 +117,16 @@
                 return;
             this.SessionStats.Add(stats); //should there be any validation?
             this.CalculateStats();
+        }
+
+        public IList<int> GetPixelMovedHistory()
+        {
+            return this.SessionStats.Select(i => i.PixelsMoved).ToList();
+        }
+
+        public IList<int> GetScoreHistory()
+        {
+            return this.SessionStats.Select(i => i.Score).ToList();
         }
 
         private void CalculateStats()

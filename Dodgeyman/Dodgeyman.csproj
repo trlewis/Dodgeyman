@@ -78,7 +78,8 @@
     <Compile Include="GameScreens\GameScreen.cs" />
     <Compile Include="GameScreens\GameScreenManager.cs" />
     <Compile Include="GameScreens\MainMenuScreen.cs" />
-    <Compile Include="GameScreens\StatsScreen.cs" />
+    <Compile Include="GameScreens\Stats\StatLineGraph.cs" />
+    <Compile Include="GameScreens\Stats\StatsScreen.cs" />
     <Compile Include="Models\ActiveEntity.cs" />
     <Compile Include="Models\LineShape.cs" />
     <Compile Include="Models\Stats\GameStats.cs" />
