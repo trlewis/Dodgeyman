@@ -73,6 +73,7 @@
     <Compile Include="GameScreens\ArenaScreen\Lines\OrthagonalDodgeLineDirection.cs" />
     <Compile Include="GameScreens\ArenaScreen\Lines\LineCrossedEventArgs.cs" />
     <Compile Include="GameScreens\ArenaScreen\Lines\RotateDodgeLine.cs" />
+    <Compile Include="GameScreens\ArenaScreen\Particle.cs" />
     <Compile Include="GameScreens\ArenaScreen\Player.cs" />
     <Compile Include="GameScreens\GameScreen.cs" />
     <Compile Include="GameScreens\GameScreenManager.cs" />

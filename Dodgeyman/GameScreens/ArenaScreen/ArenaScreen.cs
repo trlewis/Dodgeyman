@@ -14,17 +14,20 @@
     {
         private const float PlayableAreaPercent = 0.7f;
         private const float ScoreScale = 15;
+        private const int ParticlesPerCross = 40;
 
-        private readonly List<DodgeLine> _lines = new List<DodgeLine>();
-        private readonly Queue<DodgeLine> _finishedLines = new Queue<DodgeLine>(); //lines to remove from list
         private readonly Clock _arenaClock = new Clock();
+        private readonly Queue<DodgeLine> _finishedLines = new Queue<DodgeLine>(); //lines to remove from list
+        private readonly Queue<Particle> _finishedParticles = new Queue<Particle>(); //particles to remove from the list
+        private readonly List<DodgeLine> _lines = new List<DodgeLine>();
+        private readonly List<Particle> _particles = new List<Particle>();
+        private readonly SessionStats _stats = new SessionStats();
         
         private int _lineSpawnTime = 1300; //in milliseconds, goes down as the game goes on
         private int _lastLineSpawnTime; //in milliseconds
         private bool _gameOver;
         private GameOverPanel _gameoverPanel;
         private BitmapFont _bf;
-        private readonly SessionStats _stats = new SessionStats();
 
         // ---------------------------------------------
         // PROPERTIES
@@ -73,6 +76,9 @@
             target.Draw(this.ArenaRectangle);
             this.DrawScore(target);
 
+            foreach(var particle in this._particles)
+                particle.Draw(target);
+
             foreach (var line in this._lines)
                 line.Draw(target);
 
@@ -87,6 +93,9 @@
         {
             this.CreateArena();
             this.CreatePlayer();
+
+            //hopefully there won't ever be more than 15 lines worth of particles on screen at a time.
+            this._particles.Capacity = 15*ParticlesPerCross;
 
             this._bf = new BitmapFont("Assets/5x5numbers.png");
             this._bf.StringSprite.Scale = new Vector2f(ScoreScale, ScoreScale);
@@ -108,6 +117,9 @@
             }
             else if (this._gameOver && this._gameoverPanel != null)
                 this._gameoverPanel.Update();
+
+            //always update particles
+            this.UpdateParticles();
         }
 
         #endregion Inherited members
@@ -148,16 +160,6 @@
             this.Player.PlayerMoved += (sender, i) => this._stats.PixelsMoved += i;
         }
 
-        private void DrawSpawnTime(RenderTarget target)
-        {
-            var text = this._lineSpawnTime.ToString(CultureInfo.InvariantCulture);
-            if (this._gameOver)
-                text = "0 " + text;
-            this._bf.RenderText(text);
-            this._bf.StringSprite.Position = new Vector2f(0, 0);
-            target.Draw(this._bf.StringSprite);
-        }
-
         private void DrawScore(RenderTarget target)
         {
             this._bf.RenderText(this._stats.Score.ToString(CultureInfo.InvariantCulture));
@@ -171,6 +173,7 @@
 
         private void GameOver()
         {
+            //TODO: spawn player death particles
             this._gameOver = true;
             this.SetScoreTint();
             foreach (var line in this._lines)
@@ -222,6 +225,8 @@
                 var newSpawnTime = (int)Math.Max(this._lineSpawnTime - timeReduction, minSpawnTime);
                 //let it bring it down by 1ms after it hits "minimum"
                 this._lineSpawnTime = (this._lineSpawnTime <= minSpawnTime) ? this._lineSpawnTime - 1 : newSpawnTime;
+                //only spawn line particles if it wasn't a killing collision
+                this.SpawnLineParticles(args.LineColor, args.CrossedPosition);
             }
             else
             {
@@ -249,6 +254,25 @@
             this._bf.StringSprite.Color = new Color(pc.R, pc.G, pc.B, alpha);
         }
 
+        private void SpawnLineParticles(Color color, Vector2f position)
+        {
+            //just spawn particles bursting outwards in a uniformly random circle.
+            //with random velocity
+            const float speed = 1.25f;
+            var rand = new Random();
+            for (int i = 0; i < ParticlesPerCross; i++)
+            {
+                var angle = rand.NextDouble()*Math.PI*2;
+                var vx = (float) Math.Cos(angle) * speed;
+                var vy = (float) Math.Sin(angle) * speed;
+                var velocity = new Vector2f(vx, vy);
+                velocity *= (float)Math.Max(0.2, rand.NextDouble());
+                var particle = new Particle(color, position, velocity);
+                particle.ParticleFinished += (sender, args) => this._finishedParticles.Enqueue(sender as Particle);
+                this._particles.Add(new Particle(color, position, velocity));
+            }
+        }
+
         private void UpdateLines()
         {
             foreach (DodgeLine line in this._lines)
@@ -256,6 +280,15 @@
 
             while (this._finishedLines.Count > 0)
                 this._lines.Remove(this._finishedLines.Dequeue());
+        }
+
+        private void UpdateParticles()
+        {
+            foreach(var particle in this._particles)
+                particle.Update();
+
+            while (this._finishedParticles.Count > 0)
+                this._particles.Remove(this._finishedParticles.Dequeue());
         }
     }
 }

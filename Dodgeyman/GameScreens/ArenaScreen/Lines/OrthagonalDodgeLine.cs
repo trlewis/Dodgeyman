@@ -138,7 +138,7 @@
                 return;
 
             var collided = !this._lineShape.FillColor.Equals(this.Player.Color);
-            this.OnCrossed(new LineCrossedEventArgs(collided));
+            this.OnCrossed(new LineCrossedEventArgs(collided, this.Player.HitPosition, this._lineShape.FillColor));
             this.DimShape(this._lineShape);
             this.IsCrossed = true;
         }
