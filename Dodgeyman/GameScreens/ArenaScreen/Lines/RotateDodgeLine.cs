@@ -11,40 +11,40 @@
         private const float BaseAngularVelocity = 0.5f;
         private readonly LineShape _lineShape;
         private readonly float _angularVelocity;
+
         private int _playerSide;
 
-        public RotateDodgeLine(Player player)
+        public RotateDodgeLine(Player player, RotateDodgeLineCenter center, Boolean isClockwise, Color color)
             : base(player)
         {
-            var rand = new Random();
-            var num = rand.Next(32);
             var screenSize = GameScreenManager.RenderWindow.Size;
-            uint length = Math.Max(screenSize.X, screenSize.Y);
-            length *= 2;
+            uint length = (Math.Max(screenSize.X, screenSize.Y)) * 2;
 
-            //pick random center of rotation
-            var centerX = num % 2 == 0 ? 0 : GameScreenManager.RenderWindow.Size.X;
-            var centerY = num % 4 >= 2 ? 0 : GameScreenManager.RenderWindow.Size.Y;
-            //pick CW or CCW (multiplier for base angular velocity)
-            var isClockwise = num%8 >= 4;
+            Vector2f rotatePoint;
+            Vector2f offset;
+            switch (center)
+            {
+                //case RotateDodgeLineCenter.TopLeft: //redundant
+                default:
+                    rotatePoint = new Vector2f(0, 0);
+                    offset = new Vector2f(isClockwise ? length : 0, isClockwise ? 0 : length);
+                    break;
+                case RotateDodgeLineCenter.BottomLeft:
+                    rotatePoint = new Vector2f(0, screenSize.Y);
+                    offset = new Vector2f(isClockwise ? 0 : length, isClockwise ? -length : 0);
+                    break;
+                case RotateDodgeLineCenter.BottomRight:
+                    rotatePoint = new Vector2f(screenSize.X, screenSize.Y);
+                    offset = new Vector2f(isClockwise ? -length : 0, isClockwise ? 0 : -length);
+                    break;
+                case RotateDodgeLineCenter.TopRight:
+                    rotatePoint = new Vector2f(screenSize.X, 0);
+                    offset = new Vector2f(isClockwise ? 0 : -length, isClockwise ? length : 0);
+                    break;
+            }
+
+            this._lineShape = new LineShape(offset, LineThickness) { Position = rotatePoint, FillColor = color };
             this._angularVelocity = isClockwise ? BaseAngularVelocity : -BaseAngularVelocity;
-            //pick a color
-            var color = num%16 >= 8 ? Color.Red : Color.Cyan;
-
-            //find offset of end point
-            var offset = new Vector2f(0, 0);
-            if(centerX == 0 && centerY == 0) //top-left
-                offset = new Vector2f(isClockwise ? length : 0, isClockwise ? 0 : length);
-            else if(centerX == 0 && centerY != 0) //bottom-left
-                offset = new Vector2f(isClockwise ? 0 : length, isClockwise ? -length : 0);
-            else if(centerX != 0 && centerY == 0) //top-right
-                offset = new Vector2f(isClockwise ? 0 : -length, isClockwise ? length : 0);
-            else if(centerX != 0 && centerY != 0) //bottom-right
-                offset = new Vector2f(isClockwise ? -length : 0, isClockwise ? 0 : -length);
-
-            this._lineShape = new LineShape(offset, LineThickness);
-            this._lineShape.Position = new Vector2f(centerX, centerY);
-            this._lineShape.FillColor = color;
             this.FindPlayerSide();
         }
 
@@ -73,10 +73,11 @@
                 return;
 
             this._lineShape.Rotation += this._angularVelocity;
-            this.CheckCollision();
 
             if(Math.Abs(this._lineShape.Rotation) > 90)
                 this.OnFinished();
+            else
+                this.CheckCollision();
         }
 
         #endregion Inherited members
@@ -108,5 +109,6 @@
             var crossProduct = offsetToLineEnd.Cross(offsetToPlayer);
             this._playerSide = crossProduct > 0 ? 1 : -1;
         }
+
     }
 }

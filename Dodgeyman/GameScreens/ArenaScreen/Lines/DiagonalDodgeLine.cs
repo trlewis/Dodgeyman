@@ -1,6 +1,5 @@
 ﻿namespace Dodgeyman.GameScreens.ArenaScreen.Lines
 {
-    using System;
     using Code.Extensions;
     using Models;
     using SFML.Graphics;
@@ -10,52 +9,63 @@
     {
         private const float BaseVelocity = 3.5f;
         private readonly LineShape _lineShape;
+        private readonly Vector2u _screenSize;
         private readonly Vector2f _velocity;
+
         private int _playerSide;
 
-        public DiagonalDodgeLine(Player player) : base(player)
+        public DiagonalDodgeLine(Player player, DiagonalDodgeLineDirection direction, Color color) : base(player)
         {
-            //this._direction = GetRandomDirection();
-            var direction = GetRandomDirection();
-            var screenSize = GameScreenManager.RenderWindow.Size;
+            this._screenSize = GameScreenManager.RenderWindow.Size;
 
-            //get position(first point), offset(end of line from first point), and velocity
-            var linePosition = new Vector2f();
-            var offset = new Vector2f();
-
-            //Vector2f velocity;
-            var halfx = screenSize.X/2f;
-            var halfy = screenSize.Y/2f;
+            //get position, offset, and velocity of line
+            var halfx = this._screenSize.X/2f;
+            var halfy = this._screenSize.Y/2f;
+            Vector2f linePosition;
+            Vector2f offset;
             switch (direction)
             {
-                case DiagonalDodgeLineDirection.BottomLeft:
+                //case DiagonalDodgeLineDirection.BottomLeft: //redundant
+                default:
                     linePosition = new Vector2f(-halfx, halfy);
-                    offset = new Vector2f(screenSize.X, screenSize.Y);
+                    offset = new Vector2f(this._screenSize.X, this._screenSize.Y);
                     this._velocity = new Vector2f(BaseVelocity, -BaseVelocity);
                     break;
                 case DiagonalDodgeLineDirection.BottomRight:
-                    linePosition = new Vector2f(halfx, screenSize.Y * 1.5f);
-                    offset = new Vector2f(screenSize.X, -screenSize.Y);
+                    linePosition = new Vector2f(halfx, this._screenSize.Y * 1.5f);
+                    offset = new Vector2f(this._screenSize.X, -this._screenSize.Y);
                     this._velocity = new Vector2f(-BaseVelocity, -BaseVelocity);
                     break;
                 case DiagonalDodgeLineDirection.TopLeft:
                     linePosition = new Vector2f(-halfx, halfy);
-                    offset = new Vector2f(screenSize.X, -screenSize.Y);
+                    offset = new Vector2f(this._screenSize.X, -this._screenSize.Y);
                     this._velocity = new Vector2f(BaseVelocity, BaseVelocity);
                     break;
                 case DiagonalDodgeLineDirection.TopRight:
                     linePosition = new Vector2f(halfx, -halfy);
-                    offset = new Vector2f(screenSize.X, screenSize.Y);
+                    offset = new Vector2f(this._screenSize.X, this._screenSize.Y);
                     this._velocity = new Vector2f(-BaseVelocity, BaseVelocity);
                     break;
             }
 
-            var rand = new Random();
-            var color = rand.Next()%2 == 0 ? Color.Cyan : Color.Red;
-            this._lineShape = new LineShape(offset, 2);
+            this._lineShape = new LineShape(offset, LineThickness);
             this._lineShape.FillColor = color;
             this._lineShape.Position = linePosition;
             this.FindPlayerSide();
+        }
+
+        // ---------------------------------------------
+        // PROPERTIES
+        // ---------------------------------------------
+
+        private bool IsFinished
+        {
+            get
+            {
+                //if the middle of the line is outside of the screen then the line is finished.
+                var middle = (this._lineShape.GlobalPoint1 + this._lineShape.GlobalPoint2)/2;
+                return (middle.X < 0 || middle.X > this._screenSize.X);
+            }
         }
 
         // ---------------------------------------------
@@ -79,7 +89,10 @@
             if (!this.IsActive)
                 return;
             this._lineShape.Position += this._velocity;
-            this.CheckCollision();
+            if(this.IsFinished)
+                this.OnFinished();
+            else
+                this.CheckCollision();
         }
 
         #endregion Inherited members
@@ -87,13 +100,6 @@
         // ---------------------------------------------
         // METHODS
         // ---------------------------------------------
-
-        private static DiagonalDodgeLineDirection GetRandomDirection()
-        {
-            Array values = Enum.GetValues(typeof (DiagonalDodgeLineDirection));
-            var random = new Random();
-            return (DiagonalDodgeLineDirection) values.GetValue(random.Next(values.Length));
-        }
 
         private void CheckCollision()
         {
