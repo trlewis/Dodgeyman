@@ -11,6 +11,7 @@
     {
         private const string FileName = @".\stats.bin";
         private const string TempFileName = @".\stats.bin.tmp";
+
         private static bool _initialized;
         private static GameStats _instance;
 
@@ -84,6 +85,8 @@
         // ---------------------------------------------
         // PROPERTIES
         // ---------------------------------------------
+        public double AveragePixelsMoved { get; private set; }
+
         public double AverageScore { get; private set; }
 
         public int GamesPlayed { get; private set; }
@@ -94,7 +97,7 @@
 
         public int TotalColorSwitches { get; private set; }
 
-        public int TotalPixelsMoved { get; private set; }
+        public long TotalPixelsMoved { get; private set; }
 
         public int TotalScore { get; private set; }
 
@@ -106,6 +109,7 @@
         // ---------------------------------------------
         // METHODS
         // ---------------------------------------------
+
         public void AddSessionStats(SessionStats stats)
         {
             if (stats == null)
@@ -122,6 +126,7 @@
             this.TotalScore = this.SessionStats.Sum(si => si.Score);
             this.TotalColorSwitches = this.SessionStats.Sum(si => si.ColorSwitches);
             this.TotalPixelsMoved = this.SessionStats.Sum(si => si.PixelsMoved);
+            this.AveragePixelsMoved = this.TotalPixelsMoved/(double) this.GamesPlayed;
         }
     }
 }

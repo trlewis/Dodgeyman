@@ -14,31 +14,13 @@
         private const string QuitString = "Quit";
         private const string StartString = "Start";
         private const string StatsString = "Stats";
-
-        private static readonly Vector2f _titleScale = new Vector2f(4, 4);
-        private readonly String[] _menuOptions = {StartString, QuitString};
-
+        private static readonly Vector2f TitleScale = new Vector2f(4, 4);
+        
         private float _bounceOffset;
         private BitmapFont _font;
+        private String[] _menuOptions;
         private int _selectedOption;
         private Vector2u _windowSize;
-
-        private void HandleKeyPress(object sender, KeyEventArgs args)
-        {
-            if (!this.IsActive)
-                return;
-
-            if (args.Code == Keyboard.Key.Down && this._selectedOption < this._menuOptions.Length - 1)
-                this._selectedOption++;
-            if (args.Code == Keyboard.Key.Up && this._selectedOption > 0)
-                this._selectedOption--;
-
-            if (args.Code == Keyboard.Key.Return)
-                this.ChoiceSelected();
-
-            if(args.Code == Keyboard.Key.Escape)
-                GameScreenManager.PopScreen();
-        }
 
         // ---------------------------------------------
         // INHERITED MEMBERS
@@ -56,13 +38,20 @@
         //ActiveEntity
         protected override void Activate()
         {
-            this.RegisterEvents();
+            //this.RegisterEvents();
+            GameScreenManager.RenderWindow.KeyPressed += this.HandleKeyPress;
+            //this is here so the Stats option can be added after the first game
+            if (GameStats.Instance.HasStats)
+                this._menuOptions = new[] { StartString, StatsString, QuitString };
+            else
+                this._menuOptions = new[] { StartString, QuitString };
         }
 
         //ActiveEntity
         protected override void Deactivate()
         {
-            this.DeregisterEvents();
+            //this.DeregisterEvents();
+            GameScreenManager.RenderWindow.KeyPressed -= this.HandleKeyPress;
         }
 
         //GameScreen
@@ -70,9 +59,9 @@
         {
             // draw title
             this._font.RenderText("Dodgeyman");
-            this._font.StringSprite.Scale = _titleScale;
+            this._font.StringSprite.Scale = TitleScale;
             Sprite titleSprite = this._font.StringSprite;
-            var titleWidth = titleSprite.TextureRect.Width*_titleScale.X;
+            var titleWidth = titleSprite.TextureRect.Width*TitleScale.X;
             titleSprite.Position = new Vector2f((this._windowSize.X - titleWidth)/2, 20);
             target.Draw(titleSprite);
 
@@ -82,7 +71,7 @@
                 this._font.RenderText(String.Format("High Score: {0}", GameStats.Instance.HighScore));
                 this._font.StringSprite.Scale = new Vector2f(1, 1);
                 var scoreWidth = this._font.StringSprite.TextureRect.Width*this._font.StringSprite.Scale.X;
-                float scoreY = titleSprite.Position.Y + (titleSprite.TextureRect.Height*_titleScale.Y) + 30;
+                float scoreY = titleSprite.Position.Y + (titleSprite.TextureRect.Height*TitleScale.Y) + 30;
                 this._font.StringSprite.Position = new Vector2f((this._windowSize.X - scoreWidth)/2, scoreY);
                 target.Draw(this._font.StringSprite);
             }
@@ -108,10 +97,6 @@
             this._windowSize = GameScreenManager.RenderWindow.Size;
             this._font = new BitmapFont("Assets/monochromeSimple.png");
             GameStats.Initialize();
-            //if (GameStats.Instance.HasStats)
-            //    this._menuOptions = new[] { StartString, StatsString, QuitString };
-            //else
-            //    this._menuOptions = new[] { StartString, QuitString };
         }
 
         //GameScreen
@@ -132,15 +117,33 @@
         // METHODS
         // ---------------------------------------------
 
-        private void DeregisterEvents()
+
+        //private void DeregisterEvents()
+        //{
+        //    GameScreenManager.RenderWindow.KeyPressed -= this.HandleKeyPress;
+        //}
+
+        private void HandleKeyPress(object sender, KeyEventArgs args)
         {
-            GameScreenManager.RenderWindow.KeyPressed -= this.HandleKeyPress;
+            if (!this.IsActive)
+                return;
+
+            if (args.Code == Keyboard.Key.Down && this._selectedOption < this._menuOptions.Length - 1)
+                this._selectedOption++;
+            if (args.Code == Keyboard.Key.Up && this._selectedOption > 0)
+                this._selectedOption--;
+
+            if (args.Code == Keyboard.Key.Return)
+                this.ChoiceSelected();
+
+            if(args.Code == Keyboard.Key.Escape)
+                GameScreenManager.PopScreen();
         }
 
-        private void RegisterEvents()
-        {
-            GameScreenManager.RenderWindow.KeyPressed += this.HandleKeyPress;
-        }
+        //private void RegisterEvents()
+        //{
+        //    GameScreenManager.RenderWindow.KeyPressed += this.HandleKeyPress;
+        //}
 
         private void ChoiceSelected()
         {
@@ -152,6 +155,8 @@
                 GameScreenManager.ShutDown();
             if(choiceText.Equals(StartString))
                 GameScreenManager.PushScreen(new ArenaScreen.ArenaScreen());
+            if(choiceText.Equals(StatsString))
+                GameScreenManager.PushScreen(new StatsScreen());
         }
     }
 }

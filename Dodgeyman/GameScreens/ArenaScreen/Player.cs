@@ -155,6 +155,7 @@
             /* i know this looks weird, but it'll prevent wonky behavior when the user presses
              * left+right or up+down. instead of reversing directions it'll just stop the player
              * and resume the direction they're holding when they let go of one of the keys. */
+            var oldPosition = new Vector2f(this.PlayerSprite.Position.X, this.PlayerSprite.Position.Y);
             float vx = (this._movingLeft ? -1 : 0) + (this._movingRight ? 1 : 0);
             float vy = (this._movingUp ? -1 : 0) + (this._movingDown ? 1 : 0);
             this._velocity = new Vector2f(vx*Speed, vy*Speed);
@@ -162,7 +163,6 @@
 
             //keep player inside arena. Might want to create some extensions or custom classes/structs to handle all
             //this adding properties together stuff. i'd rather say if player.right > arenabounds.right
-            var oldPosition = this.PlayerSprite.Position;
             var pos = this.PlayerSprite.Position;
             if (this.PlayerRight > this._arenaBounds.Left + this._arenaBounds.Width)
                 pos.X = this._arenaBounds.Left + this._arenaBounds.Width - this.PlayerSprite.Size.X;
@@ -175,9 +175,9 @@
                 pos.Y = this._arenaBounds.Top;
             this.PlayerSprite.Position = pos;
 
-            if (oldPosition != pos)
+            if (oldPosition != this.PlayerSprite.Position)
             {
-                var px = (int) ((oldPosition - pos).Magnitude());
+                var px = (int) ((oldPosition - this.PlayerSprite.Position).Magnitude());
                 this.PlayerMoved.SafeInvoke(this, px);
             }
         }
