@@ -11,14 +11,12 @@
         public static DodgeLine GenerateLine(Player player)
         {
             int val = Rand.Next(100);
-            if (val < 33)
+            if(val < 40)
                 return GenerateOrthagonalDodgeLine(player);
-            if (val < 66)
-                return GenerateRotateDodgeLine(player);
-            if (val < 100)
+            if (val < 80)
                 return GenerateDiagonalDodgeLine(player);
 
-            return GenerateOrthagonalDodgeLine(player);
+            return GenerateRotateDodgeLine(player);
         }
 
         // ---------------------------------------------
