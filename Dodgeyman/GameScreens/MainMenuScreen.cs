@@ -22,7 +22,6 @@
         private BitmapFont _font;
         private String[] _menuOptions;
         private int _selectedOption;
-        private Vector2u _windowSize;
 
         // ---------------------------------------------
         // INHERITED MEMBERS
@@ -34,13 +33,11 @@
         public override void Dispose()
         {
             this._font.Dispose();
-            GameScreenManager.RenderWindow.KeyPressed -= this.HandleKeyPress;
         }
 
         //ActiveEntity
         protected override void Activate()
         {
-            //this.RegisterEvents();
             GameScreenManager.RenderWindow.KeyPressed += this.HandleKeyPress;
             //this is here so the Stats option can be added after the first game
             if (GameStats.Instance.HasStats)
@@ -63,7 +60,7 @@
             this._font.StringSprite.Scale = TitleScale;
             Sprite titleSprite = this._font.StringSprite;
             var titleWidth = titleSprite.TextureRect.Width*TitleScale.X;
-            titleSprite.Position = new Vector2f((int)((this._windowSize.X - titleWidth)/2), 20);
+            titleSprite.Position = new Vector2f((int)((this.TargetSize.X - titleWidth)/2), 20);
             target.Draw(titleSprite);
 
             // draw high score
@@ -73,7 +70,7 @@
                 this._font.RenderText(String.Format("HIGH SCORE: {0}", GameStats.Instance.HighScore));
                 var scoreWidth = this._font.StringSprite.TextureRect.Width*this._font.StringSprite.Scale.X;
                 var scoreY = (int)(titleSprite.Position.Y + (titleSprite.TextureRect.Height*TitleScale.Y) + 30);
-                var scoreX = (int) ((this._windowSize.X - scoreWidth)/2);
+                var scoreX = (int) ((this.TargetSize.X - scoreWidth)/2);
                 this._font.StringSprite.Position = new Vector2f(scoreX, scoreY);
                 target.Draw(this._font.StringSprite);
             }
@@ -94,9 +91,12 @@
         }
 
         //GameScreen
-        public override void Initialize()
+        public override void Initialize(Vector2u targetSize)
         {
-            this._windowSize = GameScreenManager.RenderWindow.Size;
+            if (this.IsInitialized)
+                return;
+
+            base.Initialize(targetSize);
             this._font = new BitmapFont("Assets/5x5all.png");
             GameStats.Initialize();
         }
@@ -128,10 +128,8 @@
                 this._selectedOption++;
             if (args.Code == Keyboard.Key.Up && this._selectedOption > 0)
                 this._selectedOption--;
-
             if (args.Code == Keyboard.Key.Return)
                 this.ChoiceSelected();
-
             if(args.Code == Keyboard.Key.Escape)
                 GameScreenManager.PopScreen();
         }

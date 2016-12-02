@@ -82,8 +82,12 @@
             this.DrawStat(target, pxLine);
         }
 
-        public override void Initialize()
+        public override void Initialize(Vector2u targetSize)
         {
+            if (this.IsInitialized)
+                return;
+
+            base.Initialize(targetSize);
             this._bf = new BitmapFont("Assets/5x5all.png");
             GameStats.Initialize();
             
@@ -91,8 +95,9 @@
             if (GameStats.Instance.GamesPlayed <= 1) 
                 return;
 
-            var screenSize = GameScreenManager.RenderWindow.Size;
-            var graphSize = new Vector2u((uint) (screenSize.X - 2*StatX), 50);
+            //var screenSize = GameScreenManager.RenderWindow.Size;
+
+            var graphSize = new Vector2u((uint) (targetSize.X - 2*StatX), 50);
             this._scoreGraph = new StatLineGraph(graphSize, GameStats.Instance.GetScoreHistory());
             this._pixelsMovedGraph = new StatLineGraph(graphSize, GameStats.Instance.GetPixelMovedHistory());
         }

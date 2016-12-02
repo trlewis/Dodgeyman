@@ -4,6 +4,7 @@
     using Code.Extensions;
     using Models;
     using SFML.Graphics;
+    using SFML.System;
 
     abstract class DodgeLine : ActiveEntity, IDisposable
     {
@@ -24,9 +25,11 @@
         /// Call this method from any constructor of a class that inherits from this one.
         /// </summary>
         /// <param name="player">The Player that is trying to dodge the line.</param>
-        protected DodgeLine(Player player)
+        /// <param name="targetSize">The size of the screen or are this line should occupy.</param>
+        protected DodgeLine(Player player, Vector2u targetSize)
         {
             this.Player = player;
+            this.TargetSize = targetSize;
             this.IsActive = true;
         }
 
@@ -44,6 +47,11 @@
         /// a killing collision occurred, but it does mean the opportunity to score a point has passed.
         /// </summary>
         protected bool IsCrossed { get; set; }
+
+        /// <summary>
+        /// The size of the screen or area that this DodgeLine will be drawn on.
+        /// </summary>
+        protected Vector2u TargetSize { get; private set; }
 
         // ---------------------------------------------
         // INHERITED MEMBERS
@@ -76,6 +84,9 @@
         /// </summary>
         public abstract void Update();
 
+        /// <summary>
+        /// Dims the fill color of the given Shape
+        /// </summary>
         protected void DimShape(Shape shape)
         {
             const uint dimFactor = 3;

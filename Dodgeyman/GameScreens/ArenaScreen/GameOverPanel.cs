@@ -10,16 +10,15 @@
         private readonly BitmapFont _bf;
         private uint _tint = 1;
 
-        public GameOverPanel()
+        public GameOverPanel(Vector2u targetSize)
         {
             this._bf = new BitmapFont("Assets/5x5all.png");
             this._bf.RenderText("GAME OVER");
             this._bf.StringSprite.Scale = new Vector2f(7, 7);
 
             // put the game over prompt 1/4 down the screen, in the middle
-            var windowSize = GameScreenManager.RenderWindow.Size;
-            var tx = ((int) windowSize.X - this._bf.ScreenSize.X)/2;
-            var ty = ((int) windowSize.Y - this._bf.ScreenSize.Y)/4;
+            var tx = ((int) targetSize.X - this._bf.ScreenSize.X)/2;
+            var ty = ((int) targetSize.Y - this._bf.ScreenSize.Y)/4;
             var textPos = new Vector2f(tx, ty);
             this._bf.StringSprite.Position = textPos;
         }

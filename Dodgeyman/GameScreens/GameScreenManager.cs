@@ -16,8 +16,8 @@
     internal static class GameScreenManager
     {
         private static bool _isInitialized;
-        private static readonly Stack<GameScreen> _screens = new Stack<GameScreen>();
-        private static readonly Clock _clock = new Clock();
+        private static readonly Stack<GameScreen> Screens = new Stack<GameScreen>();
+        private static readonly Clock Clock = new Clock();
         private static RenderWindow _window;
 
         // ---------------------------------------------
@@ -41,7 +41,7 @@
 
         private static bool HasScreens
         {
-            get { return _screens.Count > 0; }
+            get { return Screens.Count > 0; }
         }
 
         // ---------------------------------------------
@@ -57,7 +57,7 @@
             if (!HasScreens)
                 return;
             RenderWindow.Clear(Color.Black);
-            _screens.Peek().Draw(RenderWindow);
+            Screens.Peek().Draw(RenderWindow);
             RenderWindow.Display();
         }
 
@@ -77,6 +77,7 @@
         {
             if (_isInitialized)
                 return;
+            _isInitialized = true;
 
             GameStats.Initialize();
             IsRunning = true;
@@ -97,12 +98,12 @@
             if (!HasScreens)
                 return;
 
-            var topScreen = _screens.Pop();
+            var topScreen = Screens.Pop();
             topScreen.IsActive = false;
             topScreen.Dispose();
 
             if (HasScreens)
-                _screens.Peek().IsActive = true;
+                Screens.Peek().IsActive = true;
             else
                 ShutDown();
         }
@@ -115,11 +116,11 @@
         public static void PushScreen(GameScreen screen)
         {
             if (HasScreens)
-                _screens.Peek().IsActive = false;
+                Screens.Peek().IsActive = false;
 
-            screen.Initialize();
+            screen.Initialize(RenderWindow.Size);
             screen.IsActive = true;
-            _screens.Push(screen);
+            Screens.Push(screen);
         }
 
         /// <summary>
@@ -129,7 +130,7 @@
         {
             while (HasScreens)
             {
-                var screen = _screens.Pop();
+                var screen = Screens.Pop();
                 screen.IsActive = false;
                 screen.Dispose();
             }
@@ -147,7 +148,7 @@
         {
             if (!HasScreens)
                 return;
-            _screens.Peek().Update(_clock.ElapsedTime);
+            Screens.Peek().Update(Clock.ElapsedTime);
         }
     }
 }

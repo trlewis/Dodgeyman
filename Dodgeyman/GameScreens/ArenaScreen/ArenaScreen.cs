@@ -13,8 +13,8 @@
     internal class ArenaScreen : GameScreen
     {
         private const float PlayableAreaPercent = 0.7f;
-        private const float ScoreScale = 15;
         private const int ParticlesPerCross = 40;
+        private const float ScoreScale = 15;
 
         private readonly Clock _arenaClock = new Clock();
         private readonly Queue<DodgeLine> _finishedLines = new Queue<DodgeLine>(); //lines to remove from list
@@ -23,17 +23,18 @@
         private readonly List<Particle> _particles = new List<Particle>();
         private readonly SessionStats _stats = new SessionStats();
         
-        private int _lineSpawnTime = 1300; //in milliseconds, goes down as the game goes on
-        private int _lastLineSpawnTime; //in milliseconds
+        private BitmapFont _bf;
         private bool _gameOver;
         private GameOverPanel _gameoverPanel;
-        private BitmapFont _bf;
+        private int _lastLineSpawnTime; //in milliseconds
+        private int _lineSpawnTime = 1300; //in milliseconds, goes down as the game goes on
 
         // ---------------------------------------------
         // PROPERTIES
         // ---------------------------------------------
 
         private RectangleShape ArenaRectangle { get; set; }
+
         private Player Player { get; set; }
 
         // ---------------------------------------------
@@ -89,8 +90,12 @@
         }
 
         // GameScreen
-        public override void Initialize()
+        public override void Initialize(Vector2u targetSize)
         {
+            if (this.IsInitialized)
+                return;
+
+            base.Initialize(targetSize);
             this.CreateArena();
             this.CreatePlayer();
 
@@ -130,12 +135,11 @@
 
         private void CreateArena()
         {
-            var screenSize = GameScreenManager.RenderWindow.Size;
-            var width = (float) Math.Floor(screenSize.X*PlayableAreaPercent);
-            var height = (float) Math.Floor(screenSize.Y*PlayableAreaPercent);
+            var width = (float) Math.Floor(this.TargetSize.X*PlayableAreaPercent);
+            var height = (float) Math.Floor(this.TargetSize.Y*PlayableAreaPercent);
             var arenaSize = new Vector2f(width, height);
-            var dx = screenSize.X - arenaSize.X;
-            var dy = screenSize.Y - arenaSize.Y;
+            var dx = this.TargetSize.X - arenaSize.X;
+            var dy = this.TargetSize.Y - arenaSize.Y;
             this.ArenaRectangle = new RectangleShape(arenaSize)
                                   {
                                       FillColor = Color.Transparent,
@@ -181,7 +185,7 @@
             this.Player.IsActive = false;
             GameStats.Initialize();
             GameStats.Instance.AddSessionStats(this._stats);
-            this._gameoverPanel = new GameOverPanel();
+            this._gameoverPanel = new GameOverPanel(this.TargetSize);
         }
 
         private void HandleLineSpawning()
@@ -190,7 +194,7 @@
             if (clockTime - this._lastLineSpawnTime < this._lineSpawnTime)
                 return;
 
-            var dl = DodgeLineGenerator.GenerateLine(this.Player);
+            var dl = DodgeLineGenerator.GenerateLine(this.Player, this.TargetSize);
             dl.Crossed += this.LineCrossed;
             dl.Finished += this.LineFinished;
             this._lines.Add(dl);
@@ -225,7 +229,6 @@
                 var newSpawnTime = (int)Math.Max(this._lineSpawnTime - timeReduction, minSpawnTime);
                 //let it bring it down by 1ms after it hits "minimum"
                 this._lineSpawnTime = (this._lineSpawnTime <= minSpawnTime) ? this._lineSpawnTime - 1 : newSpawnTime;
-                //only spawn line particles if it wasn't a killing collision
                 this.SpawnLineParticles(args.LineColor, args.CrossedPosition);
             }
             else
@@ -256,8 +259,7 @@
 
         private void SpawnLineParticles(Color color, Vector2f position)
         {
-            //just spawn particles bursting outwards in a uniformly random circle.
-            //with random velocity
+            //just spawn particles bursting outwards in a uniformly random circle with random velocity
             const float speed = 1.25f;
             var rand = new Random();
             for (int i = 0; i < ParticlesPerCross; i++)

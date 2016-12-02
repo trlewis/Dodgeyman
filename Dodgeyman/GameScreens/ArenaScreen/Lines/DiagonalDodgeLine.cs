@@ -1,6 +1,5 @@
 ﻿namespace Dodgeyman.GameScreens.ArenaScreen.Lines
 {
-    using System;
     using Code.Extensions;
     using Models;
     using SFML.Graphics;
@@ -8,18 +7,16 @@
 
     class DiagonalDodgeLine : DodgeLine
     {
-        //want it to look like it's moving diagonally at 3.5px/frame
-        private static readonly Vector2f BaseVelocity = new Vector2f((float)Math.Sqrt(3.5f*3.5f + 3.5f*3.5f), 0);
+        //same(ish) magnitude as <3.5, 3.5>
+        private static readonly Vector2f BaseVelocity = new Vector2f(4.949747f, 0);
         private readonly LineShape _lineShape;
-        private readonly Vector2u _screenSize;
         private readonly Vector2f _velocity;
 
         private int _playerSide;
 
-        public DiagonalDodgeLine(Player player, DiagonalDodgeLineDirection direction, Color color) : base(player)
+        public DiagonalDodgeLine(Player player, DiagonalDodgeLineDirection direction, Color color, Vector2u targetSize) 
+            : base(player, targetSize)
         {
-            this._screenSize = GameScreenManager.RenderWindow.Size;
-
             //lines will be diagonal but move left or right. looks like they're moving diagonally though
             Vector2f linePosition;
             Vector2f offset;
@@ -27,23 +24,23 @@
             {
                 //case DiagonalDodgeLineDirection.BottomLeft: //redundant
                 default:
-                    linePosition = new Vector2f(-this._screenSize.X, 0);
-                    offset = new Vector2f(this._screenSize.X, this._screenSize.Y);
+                    linePosition = new Vector2f(-this.TargetSize.X, 0);
+                    offset = new Vector2f(this.TargetSize.X, this.TargetSize.Y);
                     this._velocity = BaseVelocity;
                     break;
                 case DiagonalDodgeLineDirection.BottomRight:
-                    linePosition = new Vector2f(this._screenSize.X * 2, 0);
-                    offset = new Vector2f(-this._screenSize.X, this._screenSize.Y);
+                    linePosition = new Vector2f(this.TargetSize.X * 2, 0);
+                    offset = new Vector2f(-this.TargetSize.X, this.TargetSize.Y);
                     this._velocity = -BaseVelocity;
                     break;
                 case DiagonalDodgeLineDirection.TopLeft:
                     linePosition = new Vector2f(0, 0);
-                    offset = new Vector2f(-this._screenSize.X, this._screenSize.Y);
+                    offset = new Vector2f(-this.TargetSize.X, this.TargetSize.Y);
                     this._velocity = BaseVelocity;
                     break;
                 case DiagonalDodgeLineDirection.TopRight:
-                    linePosition = new Vector2f(this._screenSize.X, 0);
-                    offset = new Vector2f(this._screenSize.X, this._screenSize.Y);
+                    linePosition = new Vector2f(this.TargetSize.X, 0);
+                    offset = new Vector2f(this.TargetSize.X, this.TargetSize.Y);
                     this._velocity = -BaseVelocity;
                     break;
             }
@@ -65,7 +62,7 @@
                 //if both the x values of the line are outside of the screen then the line is finished
                 //give it a few pixels on either side of the screen though
                 const float buffer = 5f;
-                var width = this._screenSize.X + buffer;
+                var width = this.TargetSize.X + buffer;
                 var x = this._lineShape.GlobalPoint1.X;
                 var xx = this._lineShape.GlobalPoint2.X;
                 return (x < -buffer && xx < -buffer) || (x > width && xx > width);

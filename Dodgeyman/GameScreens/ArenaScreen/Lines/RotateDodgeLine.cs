@@ -14,11 +14,11 @@
 
         private int _playerSide;
 
-        public RotateDodgeLine(Player player, RotateDodgeLineCenter center, Boolean isClockwise, Color color)
-            : base(player)
+        public RotateDodgeLine(Player player, RotateDodgeLineCenter center, Boolean isClockwise, Color color, Vector2u targetSize)
+            : base(player, targetSize)
         {
-            var screenSize = GameScreenManager.RenderWindow.Size;
-            uint length = (Math.Max(screenSize.X, screenSize.Y)) * 2;
+            //technically needs to be as long as the magnitude of <target x, target y> but this is close enough.
+            uint length = (Math.Max(this.TargetSize.X, this.TargetSize.Y)) * 2;
 
             Vector2f rotatePoint;
             Vector2f offset;
@@ -30,15 +30,15 @@
                     offset = new Vector2f(isClockwise ? length : 0, isClockwise ? 0 : length);
                     break;
                 case RotateDodgeLineCenter.BottomLeft:
-                    rotatePoint = new Vector2f(0, screenSize.Y);
+                    rotatePoint = new Vector2f(0, this.TargetSize.Y);
                     offset = new Vector2f(isClockwise ? 0 : length, isClockwise ? -length : 0);
                     break;
                 case RotateDodgeLineCenter.BottomRight:
-                    rotatePoint = new Vector2f(screenSize.X, screenSize.Y);
+                    rotatePoint = new Vector2f(this.TargetSize.X, this.TargetSize.Y);
                     offset = new Vector2f(isClockwise ? -length : 0, isClockwise ? 0 : -length);
                     break;
                 case RotateDodgeLineCenter.TopRight:
-                    rotatePoint = new Vector2f(screenSize.X, 0);
+                    rotatePoint = new Vector2f(this.TargetSize.X, 0);
                     offset = new Vector2f(isClockwise ? 0 : -length, isClockwise ? length : 0);
                     break;
             }

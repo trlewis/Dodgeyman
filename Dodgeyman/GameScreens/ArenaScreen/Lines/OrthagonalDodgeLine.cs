@@ -12,17 +12,14 @@
     {
         private const float Speed = 3.5f;
         private readonly LineShape _lineShape;
-        private readonly Vector2u _screenSize;
         private readonly Vector2f _velocity;
 
         //which side of the line the player is on. starts at 0 then is either 1 or -1 after the first check
         private int _playerSide;
 
-        public OrthagonalDodgeLine(Player player, OrthagonalDodgeLineDirection direction, Color color)
-            : base(player)
+        public OrthagonalDodgeLine(Player player, OrthagonalDodgeLineDirection direction, Color color, Vector2u targetSize)
+            : base(player, targetSize)
         {
-            this._screenSize = GameScreenManager.RenderWindow.Size;
-
             Vector2f center;
             Vector2f offset;
             switch (direction)
@@ -30,22 +27,22 @@
                 //case OrthagonalDodgeLineDirection.Right: //redundant
                 default:
                     center = new Vector2f(0, 0);
-                    offset = new Vector2f(0, this._screenSize.Y);
+                    offset = new Vector2f(0, this.TargetSize.Y);
                     this._velocity = new Vector2f(Speed, 0);
                     break;
                 case OrthagonalDodgeLineDirection.Left:
-                    center = new Vector2f(this._screenSize.X, 0);
-                    offset = new Vector2f(0, this._screenSize.Y);
+                    center = new Vector2f(this.TargetSize.X, 0);
+                    offset = new Vector2f(0, this.TargetSize.Y);
                     this._velocity = new Vector2f(-Speed, 0);
                     break;
                 case OrthagonalDodgeLineDirection.Down:
                     center = new Vector2f(0, 0);
-                    offset = new Vector2f(this._screenSize.X, 0);
+                    offset = new Vector2f(this.TargetSize.X, 0);
                     this._velocity = new Vector2f(0, Speed);
                     break;
                 case OrthagonalDodgeLineDirection.Up:
-                    center = new Vector2f(0, this._screenSize.Y);
-                    offset = new Vector2f(this._screenSize.X, 0);
+                    center = new Vector2f(0, this.TargetSize.Y);
+                    offset = new Vector2f(this.TargetSize.X, 0);
                     this._velocity = new Vector2f(0, -Speed);
                     break;
             }
@@ -64,7 +61,7 @@
             get
             {
                 var pos = this._lineShape.Position;
-                return pos.X < 0 || pos.X > this._screenSize.X || pos.Y < 0 || pos.Y > this._screenSize.Y;
+                return pos.X < 0 || pos.X > this.TargetSize.X || pos.Y < 0 || pos.Y > this.TargetSize.Y;
             }
         }
 
