@@ -4,7 +4,6 @@
     using SFML.Graphics;
     using SFML.System;
 
-    //TODO: rename this or the namespace so their names don't clash
     public class BitmapFont : IDisposable
     {
         private const int StartPixel = 3;
@@ -49,6 +48,24 @@
         /// The finished text string that is used to draw.
         /// </summary>
         public Sprite StringSprite { get; private set; }
+
+        /// <summary>
+        /// Vertical pixels between lines. This value takes into account the scale of the sprite, so set it before using this value
+        /// </summary>
+        public int ScreenLineHeight { get { return (int)((this._sourceImage.Size.Y + this._lineSpacing) * this.StringSprite.Scale.Y); } }
+
+        /// <summary>
+        /// The actual size of the sprite that will be drawn, in pixels. Takes into account the scale of the sprite.
+        /// </summary>
+        public Vector2f ScreenSize
+        {
+            get
+            {
+                var width = this.StringSprite.Scale.X*this.StringSprite.TextureRect.Width;
+                var height = this.StringSprite.Scale.Y*this.StringSprite.TextureRect.Height;
+                return new Vector2f(width, height);
+            }
+        }
 
         // ---------------------------------------------
         // INHERITED MEMBERS

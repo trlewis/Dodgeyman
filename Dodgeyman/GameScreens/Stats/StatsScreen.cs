@@ -10,9 +10,10 @@
     class StatsScreen : GameScreen
     {
         private const float StatX = 20;
-        private const float StatYIncrement = 20;
-        private static readonly Vector2f StatScale = new Vector2f(1, 1);
-        private static readonly Vector2f TitleScale = new Vector2f(3, 3);
+        private static readonly Vector2f StatScale = new Vector2f(2, 2);
+        private static readonly Vector2f TitleScale = new Vector2f(6, 6);
+        private const string ScoreLineTemplate = "HIGH: {0}   AVERAGE: {1:0.00}  TOTAL: {2}";
+        private const string PixelsLineTemplate = "AVERAGE: {0:0.00}  TOTAL: {1}";
 
         private BitmapFont _bf;
         private StatLineGraph _pixelsMovedGraph;
@@ -48,45 +49,42 @@
         {
             this.DrawHeader(target);
 
+            this._statY = this._bf.StringSprite.Position.Y + this._bf.ScreenSize.Y + 10;
             this._bf.StringSprite.Scale = StatScale;
-            this._statY = 100;
             var gs = GameStats.Instance;
-            this.DrawStat(target, String.Format("Games Played: {0}", gs.GamesPlayed));
-            this._statY += StatYIncrement;
+            this.DrawStat(target, String.Format("GAMES PLAYED: {0}", gs.GamesPlayed));
+            this.DrawStat(target, String.Format("TOTAL COLOR SWITCHES: {0}", gs.TotalColorSwitches));
+            this._statY += this._bf.ScreenLineHeight;
 
             //would be null if only 1 game has been played
             if (this._scoreGraph != null)
             {
-                this.DrawStat(target, "Score");
+                this.DrawStat(target, "SCORE");
                 this._scoreGraph.GraphSprite.Position = new Vector2f(StatX, this._statY);
                 this._statY += this._scoreGraph.GraphSprite.TextureRect.Height + 9;
                 target.Draw(this._scoreGraph.GraphSprite);
             }
 
-            this.DrawStat(target, String.Format("High: {0}", gs.HighScore));
-            this.DrawStat(target, String.Format("Average: {0:0.00}", gs.AverageScore));
-            this.DrawStat(target, String.Format("Total: {0}", gs.TotalScore));
-            this._statY += StatYIncrement;
-
-            this.DrawStat(target, String.Format("Total Color Switches: {0}", gs.TotalColorSwitches));
-            this._statY += StatYIncrement;
+            var scoreLine = string.Format(ScoreLineTemplate, gs.HighScore, gs.AverageScore, gs.TotalScore);
+            this.DrawStat(target, scoreLine);
+            this._statY += this._bf.ScreenLineHeight;
 
             //would be null if only 1 game has been played
             if (this._pixelsMovedGraph != null)
             {
-                this.DrawStat(target, "Pixels Moved");
+                this.DrawStat(target, "PIXELS MOVED");
                 this._pixelsMovedGraph.GraphSprite.Position = new Vector2f(StatX, this._statY);
                 this._statY += this._scoreGraph.GraphSprite.TextureRect.Height + 9;
                 target.Draw(this._pixelsMovedGraph.GraphSprite);
             }
 
-            this.DrawStat(target, String.Format("Average: {0:0.00}", gs.AveragePixelsMoved));
-            this.DrawStat(target, String.Format("Total: {0}", gs.TotalPixelsMoved));
+            var pxLine = string.Format(PixelsLineTemplate, gs.AveragePixelsMoved, gs.TotalPixelsMoved);
+            this.DrawStat(target, pxLine);
         }
 
         public override void Initialize()
         {
-            this._bf = new BitmapFont("Assets/monochromeSimple.png");
+            this._bf = new BitmapFont("Assets/5x5all.png");
             GameStats.Initialize();
             
             //if only 1 game has been played there really isn't a reason to make a graph...
@@ -109,9 +107,9 @@
 
         private void DrawHeader(RenderTarget target)
         {
-            this._bf.RenderText("Stats");
+            this._bf.RenderText("STATS");
             this._bf.StringSprite.Scale = TitleScale;
-            var x = (GameScreenManager.RenderWindow.Size.X - (this._bf.StringSprite.TextureRect.Width*TitleScale.X))/2;
+            var x = (target.Size.X - this._bf.ScreenSize.X)/2;
             this._bf.StringSprite.Position = new Vector2f(x, 20);
             target.Draw(this._bf.StringSprite);
         }
@@ -121,7 +119,7 @@
             this._bf.RenderText(statString);
             this._bf.StringSprite.Position = new Vector2f(StatX, this._statY);
             target.Draw(this._bf.StringSprite);
-            this._statY += StatYIncrement;
+            this._statY += this._bf.ScreenLineHeight;
         }
 
         private void HandleKeyPress(object sender, KeyEventArgs args)

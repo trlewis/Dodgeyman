@@ -94,10 +94,10 @@
     </None>
   </ItemGroup>
   <ItemGroup>
-    <Content Include="Assets\5x5numbers.png">
+    <Content Include="Assets\5x5all.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="Assets\monochromeSimple.png">
+    <Content Include="Assets\5x5numbers.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
     <Content Include="lib\csfml-audio-2.dll">

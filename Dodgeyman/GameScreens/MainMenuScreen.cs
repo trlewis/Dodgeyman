@@ -12,10 +12,11 @@
     {
         private const float BounceDistance = 15f;
         private const float BounceTime = 1.1f; //bounces per second
-        private const string QuitString = "Quit";
-        private const string StartString = "Start";
-        private const string StatsString = "Stats";
-        private static readonly Vector2f TitleScale = new Vector2f(4, 4);
+        private const string QuitString = "QUIT";
+        private const string StartString = "START";
+        private const string StatsString = "STATS";
+        private static readonly Vector2f TitleScale = new Vector2f(8, 8);
+        private static readonly Vector2f OtherScale = new Vector2f(3, 3);
         
         private float _bounceOffset;
         private BitmapFont _font;
@@ -51,7 +52,6 @@
         //ActiveEntity
         protected override void Deactivate()
         {
-            //this.DeregisterEvents();
             GameScreenManager.RenderWindow.KeyPressed -= this.HandleKeyPress;
         }
 
@@ -59,26 +59,27 @@
         public override void Draw(RenderTarget target)
         {
             // draw title
-            this._font.RenderText("Dodgeyman");
+            this._font.RenderText("DODGEYMAN");
             this._font.StringSprite.Scale = TitleScale;
             Sprite titleSprite = this._font.StringSprite;
             var titleWidth = titleSprite.TextureRect.Width*TitleScale.X;
-            titleSprite.Position = new Vector2f((this._windowSize.X - titleWidth)/2, 20);
+            titleSprite.Position = new Vector2f((int)((this._windowSize.X - titleWidth)/2), 20);
             target.Draw(titleSprite);
 
             // draw high score
             if (GameStats.Instance.HasStats)
             {
-                this._font.RenderText(String.Format("High Score: {0}", GameStats.Instance.HighScore));
-                this._font.StringSprite.Scale = new Vector2f(1, 1);
+                this._font.StringSprite.Scale = OtherScale;
+                this._font.RenderText(String.Format("HIGH SCORE: {0}", GameStats.Instance.HighScore));
                 var scoreWidth = this._font.StringSprite.TextureRect.Width*this._font.StringSprite.Scale.X;
-                float scoreY = titleSprite.Position.Y + (titleSprite.TextureRect.Height*TitleScale.Y) + 30;
-                this._font.StringSprite.Position = new Vector2f((this._windowSize.X - scoreWidth)/2, scoreY);
+                var scoreY = (int)(titleSprite.Position.Y + (titleSprite.TextureRect.Height*TitleScale.Y) + 30);
+                var scoreX = (int) ((this._windowSize.X - scoreWidth)/2);
+                this._font.StringSprite.Position = new Vector2f(scoreX, scoreY);
                 target.Draw(this._font.StringSprite);
             }
 
             // draw menu options
-            this._font.StringSprite.Scale = new Vector2f(1, 1);
+            this._font.StringSprite.Scale = OtherScale;
             const float itemX = 50;
             float itemY = 300;
             for (int i = 0; i < this._menuOptions.Length; i++)
@@ -86,7 +87,7 @@
                 this._font.RenderText(this._menuOptions[i]);
                 Sprite sp = this._font.StringSprite;
                 var xpos = (i == this._selectedOption) ? this._bounceOffset + itemX : itemX;
-                sp.Position = new Vector2f(xpos, itemY);
+                sp.Position = new Vector2f((int)xpos, itemY);
                 target.Draw(sp);
                 itemY += 10 + (sp.TextureRect.Height*sp.Scale.Y);
             }
@@ -96,7 +97,7 @@
         public override void Initialize()
         {
             this._windowSize = GameScreenManager.RenderWindow.Size;
-            this._font = new BitmapFont("Assets/monochromeSimple.png");
+            this._font = new BitmapFont("Assets/5x5all.png");
             GameStats.Initialize();
         }
 
@@ -118,12 +119,6 @@
         // METHODS
         // ---------------------------------------------
 
-
-        //private void DeregisterEvents()
-        //{
-        //    GameScreenManager.RenderWindow.KeyPressed -= this.HandleKeyPress;
-        //}
-
         private void HandleKeyPress(object sender, KeyEventArgs args)
         {
             if (!this.IsActive)
@@ -140,11 +135,6 @@
             if(args.Code == Keyboard.Key.Escape)
                 GameScreenManager.PopScreen();
         }
-
-        //private void RegisterEvents()
-        //{
-        //    GameScreenManager.RenderWindow.KeyPressed += this.HandleKeyPress;
-        //}
 
         private void ChoiceSelected()
         {
