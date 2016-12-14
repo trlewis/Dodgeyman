@@ -1,0 +1,138 @@
+#
+# DIAGONAL Xs
+#
+---
+name: red diagonal x top
+lineTemplates:
+  - lineType: Diagonal
+    origin: top-left
+    color: red
+
+  - lineType: diagonal
+    origin: top-right
+    color: red
+---
+name: red diagonal x bottom
+lineTemplates:
+  - lineType: Diagonal
+    origin: bottom-left
+    color: red
+
+  - lineType: diagonal
+    origin: bottom-right
+    color: red
+---
+name: cyan diagonal x top
+lineTemplates:
+  - lineType: Diagonal
+    origin: top-left
+    color: cyan
+
+  - lineType: diagonal
+    origin: top-right
+    color: cyan
+---
+name: cyan diagonal x bottom
+lineTemplates:
+  - lineType: Diagonal
+    origin: bottom-left
+    color: cyan
+
+  - lineType: diagonal
+    origin: bottom-right
+    color: cyan
+#
+# ROTATE Xs
+#
+---
+name: red rotate x bottom
+lineTemplates:
+  - lineType: rotate
+    origin: bottom-left
+	color: red
+	isClockwise: true
+
+  - lineType: rotate
+    origin: bottom-right
+	isClockwise: false
+	color: red
+---
+name: red rotate x top
+lineTemplates:
+  - lineType: rotate
+    origin: top-left
+	color: red
+	isClockwise: true
+
+  - lineType: rotate
+    origin: top-right
+	isClockwise: false
+	color: red
+---
+name: cyan rotate x bottom
+lineTemplates:
+  - lineType: rotate
+    origin: bottom-left
+	color: cyan
+	isClockwise: true
+
+  - lineType: rotate
+    origin: bottom-right
+	isClockwise: false
+	color: cyan
+---
+name: cyan rotate x top
+lineTemplates:
+  - lineType: rotate
+    origin: top-left
+	color: cyan
+	isClockwise: true
+
+  - lineType: rotate
+    origin: top-right
+	isClockwise: false
+	color: cyan
+#
+# ORTHAGONAL SANDWICHES
+#
+---
+name: vertical sandwich cyan
+lineTemplates:
+  - lineType: orthagonal
+    origin: left
+	color: cyan
+
+  - lineType: orthagonal
+    origin: right
+	color: cyan
+---
+name: vertical sandwich red
+lineTemplates:
+  - lineType: orthagonal
+    origin: left
+	color: red
+
+  - lineType: orthagonal
+    origin: right
+	color: red
+---
+name: horizontal sandwich cyan
+lineTemplates:
+  - lineType: orthagonal
+    origin: top
+	color: cyan
+
+  - lineType: orthagonal
+    origin: bottom
+	color: cyan
+---
+name: horizontal sandwich red
+lineTemplates:
+  - lineType: orthagonal
+    origin: top
+	color: red
+
+  - lineType: orthagonal
+    origin: bottom
+	color: red
+...

@@ -5,6 +5,7 @@
     using System.Globalization;
     using Font;
     using Lines;
+    using Lines.LinePatterns;
     using Models.Stats;
     using SFML.Graphics;
     using SFML.System;
@@ -23,11 +24,13 @@
         private readonly List<Particle> _particles = new List<Particle>();
         private readonly SessionStats _stats = new SessionStats();
         
+        private readonly Random _rand = new Random();
+        
         private BitmapFont _bf;
         private bool _gameOver;
         private GameOverPanel _gameoverPanel;
         private int _lastLineSpawnTime; //in milliseconds
-        private int _lineSpawnTime = 1300; //in milliseconds, goes down as the game goes on
+        private int _lineSpawnTime = 1500; //in milliseconds, goes down as the game goes on
 
         // ---------------------------------------------
         // PROPERTIES
@@ -109,6 +112,8 @@
 
             var clockTime = this._arenaClock.ElapsedTime;
             this._lastLineSpawnTime = clockTime.AsMilliseconds();
+
+            LinePatternGenerator.Initialize();
         }
 
         // GameScreen
@@ -132,6 +137,17 @@
         // ---------------------------------------------
         // METHODS
         // ---------------------------------------------
+
+        /// <summary>
+        /// Takes care of all the event registering for the line and adds it to the collection
+        /// </summary>
+        /// <param name="line">The line to add to the active collection.</param>
+        private void AddLine(DodgeLine line)
+        {
+            line.Crossed += this.LineCrossed;
+            line.Finished += this.LineFinished;
+            this._lines.Add(line);
+        }
 
         private void CreateArena()
         {
@@ -191,14 +207,25 @@
         private void HandleLineSpawning()
         {
             var clockTime = this._arenaClock.ElapsedTime.AsMilliseconds();
+
             if (clockTime - this._lastLineSpawnTime < this._lineSpawnTime)
                 return;
 
-            var dl = DodgeLineGenerator.GenerateLine(this.Player, this.TargetSize);
-            dl.Crossed += this.LineCrossed;
-            dl.Finished += this.LineFinished;
-            this._lines.Add(dl);
-            this._lastLineSpawnTime = clockTime;
+            var whatToSpawn = this._rand.Next(100);
+            if (whatToSpawn < 30)
+            {
+                foreach (var lt in LinePatternGenerator.GetRandomPatternTemplates())
+                    this.AddLine(lt.CreateLine(this.Player, this.TargetSize));
+                //give patterns a little more time until next lines added
+                this._lastLineSpawnTime = clockTime + (this._lineSpawnTime/2);
+            }
+            else
+            {
+                var dl = DodgeLineGenerator.GenerateLine(this.Player, this.TargetSize);
+                this.AddLine(dl);
+                this._lastLineSpawnTime = clockTime;
+            }
+
         }
 
         private void KeyPressed(object src, KeyEventArgs args)
