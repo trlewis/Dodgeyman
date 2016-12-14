@@ -1,13 +1,13 @@
 ﻿namespace Dodgeyman.GameScreens.ArenaScreen.Lines
 {
     /// <summary>
-    /// Which direction a <see cref="OrthagonalDodgeLine"/> moves
+    /// The origin side of the screen of a <see cref="OrthagonalDodgeLine"/>
     /// </summary>
     enum OrthagonalDodgeLineDirection
     {
-        Down,
+        Bottom,
         Left,
         Right,
-        Up
+        Top
     }
 }

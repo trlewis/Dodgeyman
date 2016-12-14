@@ -62,11 +62,11 @@ lineTemplates:
   - lineType: rotate
     origin: top-left
 	color: red
-	isClockwise: true
+	isClockwise: false
 
   - lineType: rotate
     origin: top-right
-	isClockwise: false
+	isClockwise: true
 	color: red
 ---
 name: cyan rotate x bottom

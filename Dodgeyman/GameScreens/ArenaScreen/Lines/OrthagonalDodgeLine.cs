@@ -24,23 +24,23 @@
             Vector2f offset;
             switch (direction)
             {
-                //case OrthagonalDodgeLineDirection.Right: //redundant
+                //case OrthagonalDodgeLineDirection.Left: //redundant
                 default:
                     center = new Vector2f(0, 0);
                     offset = new Vector2f(0, this.TargetSize.Y);
                     this._velocity = new Vector2f(Speed, 0);
                     break;
-                case OrthagonalDodgeLineDirection.Left:
+                case OrthagonalDodgeLineDirection.Right: 
                     center = new Vector2f(this.TargetSize.X, 0);
                     offset = new Vector2f(0, this.TargetSize.Y);
                     this._velocity = new Vector2f(-Speed, 0);
                     break;
-                case OrthagonalDodgeLineDirection.Down:
+                case OrthagonalDodgeLineDirection.Top:
                     center = new Vector2f(0, 0);
                     offset = new Vector2f(this.TargetSize.X, 0);
                     this._velocity = new Vector2f(0, Speed);
                     break;
-                case OrthagonalDodgeLineDirection.Up:
+                case OrthagonalDodgeLineDirection.Bottom:
                     center = new Vector2f(0, this.TargetSize.Y);
                     offset = new Vector2f(this.TargetSize.X, 0);
                     this._velocity = new Vector2f(0, -Speed);

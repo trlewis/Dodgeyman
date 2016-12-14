@@ -64,6 +64,7 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Code\EnumHelper.cs" />
     <Compile Include="Font\BitmapFont.cs" />
     <Compile Include="Code\Extensions\EventHandlerExtensions.cs" />
     <Compile Include="Code\Extensions\Vector2fExtensions.cs" />
@@ -76,7 +77,6 @@
     <Compile Include="GameScreens\ArenaScreen\Lines\LinePatterns\LinePattern.cs" />
     <Compile Include="GameScreens\ArenaScreen\Lines\LinePatterns\LinePatternGenerator.cs" />
     <Compile Include="GameScreens\ArenaScreen\Lines\LinePatterns\LineTemplate.cs" />
-    <Compile Include="GameScreens\ArenaScreen\Lines\LinePatterns\QueuedLineTemplate.cs" />
     <Compile Include="GameScreens\ArenaScreen\Lines\OrthagonalDodgeLine.cs" />
     <Compile Include="GameScreens\ArenaScreen\Lines\OrthagonalDodgeLineDirection.cs" />
     <Compile Include="GameScreens\ArenaScreen\Lines\LineCrossedEventArgs.cs" />

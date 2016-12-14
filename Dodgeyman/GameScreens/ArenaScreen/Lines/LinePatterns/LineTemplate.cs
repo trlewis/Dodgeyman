@@ -1,6 +1,7 @@
 ﻿namespace Dodgeyman.GameScreens.ArenaScreen.Lines.LinePatterns
 {
     using System;
+    using Code;
     using SFML.Graphics;
     using SFML.System;
 
@@ -88,57 +89,21 @@
         private DodgeLine CreateDiagonalDodgeLine(Player player, Vector2u targetSize)
         {
             var color = this.GetColor();
-
-            DiagonalDodgeLineDirection dir;
-            if (this.Origin == "topleft")
-                dir = DiagonalDodgeLineDirection.TopLeft;
-            else if (this.Origin == "topright")
-                dir = DiagonalDodgeLineDirection.TopRight;
-            else if (this.Origin == "bottomleft")
-                dir = DiagonalDodgeLineDirection.BottomLeft;
-            else if (this.Origin == "bottomright")
-                dir = DiagonalDodgeLineDirection.BottomRight;
-            else
-                throw new Exception(String.Format("Unknown or incompatible line origin for Diagonal line: {0}", this.Origin));
-
+            var dir = EnumHelper<DiagonalDodgeLineDirection>.Parse(this.Origin);
             return new DiagonalDodgeLine(player, dir, color, targetSize);
         }
 
         private DodgeLine CreateOrthagonalDodgeLine(Player player, Vector2u targetSize)
         {
             var color = this.GetColor();
-
-            OrthagonalDodgeLineDirection dir;
-            if (this.Origin == "top")
-                dir = OrthagonalDodgeLineDirection.Up;
-            else if (this.Origin == "bottom")
-                dir = OrthagonalDodgeLineDirection.Down;
-            else if (this.Origin == "left")
-                dir = OrthagonalDodgeLineDirection.Left;
-            else if (this.Origin == "right")
-                dir = OrthagonalDodgeLineDirection.Right;
-            else
-                throw new Exception(String.Format("Unknown or incompatible line origin for Orthagonal line: {0}", this.Origin));
-
+            var dir = EnumHelper<OrthagonalDodgeLineDirection>.Parse(this.Origin);
             return new OrthagonalDodgeLine(player, dir, color, targetSize);
         }
 
         private DodgeLine CreateRotateDodgeLine(Player player, Vector2u targetSize)
         {
             var color = this.GetColor();
-
-            RotateDodgeLineCenter center;
-            if (this.Origin == "topleft")
-                center = RotateDodgeLineCenter.TopLeft;
-            else if (this.Origin == "topright")
-                center = RotateDodgeLineCenter.TopRight;
-            else if (this.Origin == "bottomleft")
-                center = RotateDodgeLineCenter.BottomLeft;
-            else if (this.Origin == "bottomright")
-                center = RotateDodgeLineCenter.BottomRight;
-            else
-                throw new Exception(String.Format("Unknown or incompatible line origin: {0}", this.Origin));
-
+            var center = EnumHelper<RotateDodgeLineCenter>.Parse(this.Origin);
             return new RotateDodgeLine(player, center, this.IsClockwise, color, targetSize);
         }
 
