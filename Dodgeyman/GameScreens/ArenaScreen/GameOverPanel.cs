@@ -1,6 +1,7 @@
 ﻿namespace Dodgeyman.GameScreens.ArenaScreen
 {
     using System;
+    using Code;
     using Font;
     using SFML.System;
     using SFML.Graphics;
@@ -12,7 +13,7 @@
 
         public GameOverPanel(Vector2u targetSize)
         {
-            this._bf = new BitmapFont("Assets/5x5all.png");
+            this._bf = new BitmapFont(ConfigHelper.GeneralFontLocation);
             this._bf.RenderText("GAME OVER");
             this._bf.StringSprite.Scale = new Vector2f(7, 7);
 
@@ -29,6 +30,7 @@
 
         #region Inherited members
 
+        //IDisposable
         public void Dispose()
         {
             this._bf.Dispose();

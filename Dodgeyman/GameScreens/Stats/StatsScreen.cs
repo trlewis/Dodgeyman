@@ -26,16 +26,7 @@
 
         #region Inherited members
 
-        protected override void Activate()
-        {
-            GameScreenManager.RenderWindow.KeyPressed += this.HandleKeyPress;
-        }
-
-        protected override void Deactivate()
-        {
-            GameScreenManager.RenderWindow.KeyPressed -= this.HandleKeyPress;
-        }
-
+        //IDisposable
         public override void Dispose()
         {
             this._bf.Dispose();
@@ -45,6 +36,7 @@
                 this._pixelsMovedGraph.Dispose();
         }
 
+        //GameScreen
         public override void Draw(RenderTarget target)
         {
             this.DrawHeader(target);
@@ -82,12 +74,21 @@
             this.DrawStat(target, pxLine);
         }
 
-        public override void Initialize(Vector2u targetSize)
+        //ActiveEntity
+        protected override void Activate()
         {
-            if (this.IsInitialized)
-                return;
+            GameScreenManager.RenderWindow.KeyPressed += this.HandleKeyPress;
+        }
 
-            base.Initialize(targetSize);
+        //ActiveEntity
+        protected override void Deactivate()
+        {
+            GameScreenManager.RenderWindow.KeyPressed -= this.HandleKeyPress;
+        }
+
+        //GameScreen
+        protected override void OnInitialize()
+        {
             this._bf = new BitmapFont("Assets/5x5all.png");
             GameStats.Initialize();
             
@@ -95,13 +96,12 @@
             if (GameStats.Instance.GamesPlayed <= 1) 
                 return;
 
-            //var screenSize = GameScreenManager.RenderWindow.Size;
-
-            var graphSize = new Vector2u((uint) (targetSize.X - 2*StatX), 50);
+            var graphSize = new Vector2u((uint) (this.TargetSize.X - 2*StatX), 50);
             this._scoreGraph = new StatLineGraph(graphSize, GameStats.Instance.GetScoreHistory());
             this._pixelsMovedGraph = new StatLineGraph(graphSize, GameStats.Instance.GetPixelMovedHistory());
         }
 
+        //GameScreen
         public override void Update(Time time) { }
 
         #endregion Inherited members

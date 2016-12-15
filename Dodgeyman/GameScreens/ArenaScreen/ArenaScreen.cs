@@ -3,6 +3,7 @@
     using System;
     using System.Collections.Generic;
     using System.Globalization;
+    using Code;
     using Font;
     using Lines;
     using Lines.LinePatterns;
@@ -46,25 +47,6 @@
 
         #region Inherited members
 
-        // IDisposable
-        public override void Dispose()
-        {
-            this.IsActive = false;
-            this._bf.Dispose();
-            foreach (var line in this._lines)
-                line.Dispose();
-            this.Player.Dispose();
-        }
-
-        // ActiveEntity
-        protected override void Activate()
-        {
-            this.Player.IsActive = true;
-            foreach (var line in this._lines)
-                line.IsActive = true;
-            GameScreenManager.RenderWindow.KeyPressed += this.KeyPressed;
-        }
-
         // ActiveEntity
         protected override void Deactivate()
         {
@@ -93,30 +75,6 @@
         }
 
         // GameScreen
-        public override void Initialize(Vector2u targetSize)
-        {
-            if (this.IsInitialized)
-                return;
-
-            base.Initialize(targetSize);
-            this.CreateArena();
-            this.CreatePlayer();
-
-            //hopefully there won't ever be more than 15 lines worth of particles on screen at a time.
-            this._particles.Capacity = 15*ParticlesPerCross;
-
-            this._bf = new BitmapFont("Assets/5x5numbers.png");
-            this._bf.StringSprite.Scale = new Vector2f(ScoreScale, ScoreScale);
-            this._bf.StringSprite.Color = new Color(0xFF, 0xFF, 0xFF, 0x33);
-            this.SetScoreTint();
-
-            var clockTime = this._arenaClock.ElapsedTime;
-            this._lastLineSpawnTime = clockTime.AsMilliseconds();
-
-            LinePatternGenerator.Initialize();
-        }
-
-        // GameScreen
         public override void Update(Time time)
         {
             if (!this._gameOver)
@@ -130,6 +88,45 @@
 
             //always update particles
             this.UpdateParticles();
+        }
+
+        // IDisposable
+        public override void Dispose()
+        {
+            this.IsActive = false;
+            this._bf.Dispose();
+            foreach (var line in this._lines)
+                line.Dispose();
+            this.Player.Dispose();
+        }
+
+        // ActiveEntity
+        protected override void Activate()
+        {
+            this.Player.IsActive = true;
+            foreach (var line in this._lines)
+                line.IsActive = true;
+            GameScreenManager.RenderWindow.KeyPressed += this.KeyPressed;
+        }
+
+        // GameScreen
+        protected override void OnInitialize()
+        {
+            this.CreateArena();
+            this.CreatePlayer();
+
+            //hopefully there won't ever be more than 15 lines worth of particles on screen at a time.
+            this._particles.Capacity = 15*ParticlesPerCross;
+
+            this._bf = new BitmapFont(ConfigHelper.NumberFontLocation);
+            this._bf.StringSprite.Scale = new Vector2f(ScoreScale, ScoreScale);
+            this._bf.StringSprite.Color = new Color(0xFF, 0xFF, 0xFF, 0x33);
+            this.SetScoreTint();
+
+            var clockTime = this._arenaClock.ElapsedTime;
+            this._lastLineSpawnTime = clockTime.AsMilliseconds();
+
+            LinePatternGenerator.Initialize();
         }
 
         #endregion Inherited members

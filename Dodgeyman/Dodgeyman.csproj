@@ -52,6 +52,7 @@
       <Private>False</Private>
     </Reference>
     <Reference Include="System" />
+    <Reference Include="System.Configuration" />
     <Reference Include="System.Core" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
@@ -64,6 +65,7 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Code\ConfigHelper.cs" />
     <Compile Include="Code\EnumHelper.cs" />
     <Compile Include="Font\BitmapFont.cs" />
     <Compile Include="Code\Extensions\EventHandlerExtensions.cs" />
@@ -86,6 +88,7 @@
     <Compile Include="GameScreens\ArenaScreen\Player.cs" />
     <Compile Include="GameScreens\GameScreen.cs" />
     <Compile Include="GameScreens\GameScreenManager.cs" />
+    <Compile Include="GameScreens\InstructionsScreen.cs" />
     <Compile Include="GameScreens\MainMenuScreen.cs" />
     <Compile Include="GameScreens\Stats\StatLineGraph.cs" />
     <Compile Include="GameScreens\Stats\StatsScreen.cs" />

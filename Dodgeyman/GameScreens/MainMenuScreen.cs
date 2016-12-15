@@ -1,6 +1,7 @@
 ﻿namespace Dodgeyman.GameScreens
 {
     using System;
+    using Code;
     using Font;
     using Models.Stats;
     using SFML.Graphics;
@@ -10,13 +11,16 @@
 
     internal class MainMenuScreen : GameScreen
     {
+        private const string AuthorText = "CREATED BY: TRAVIS LEWIS";
         private const float BounceDistance = 15f;
         private const float BounceTime = 1.1f; //bounces per second
+        private const string InstructionsString = "INSTRUCTIONS";
         private const string QuitString = "QUIT";
         private const string StartString = "START";
         private const string StatsString = "STATS";
         private static readonly Vector2f TitleScale = new Vector2f(8, 8);
         private static readonly Vector2f OtherScale = new Vector2f(3, 3);
+        private static readonly string VersionText = string.Format("V{0}", ConfigHelper.VersionNumber);
         
         private float _bounceOffset;
         private BitmapFont _font;
@@ -33,23 +37,6 @@
         public override void Dispose()
         {
             this._font.Dispose();
-        }
-
-        //ActiveEntity
-        protected override void Activate()
-        {
-            GameScreenManager.RenderWindow.KeyPressed += this.HandleKeyPress;
-            //this is here so the Stats option can be added after the first game
-            if (GameStats.Instance.HasStats)
-                this._menuOptions = new[] { StartString, StatsString, QuitString };
-            else
-                this._menuOptions = new[] { StartString, QuitString };
-        }
-
-        //ActiveEntity
-        protected override void Deactivate()
-        {
-            GameScreenManager.RenderWindow.KeyPressed -= this.HandleKeyPress;
         }
 
         //GameScreen
@@ -88,17 +75,20 @@
                 target.Draw(sp);
                 itemY += 10 + (sp.TextureRect.Height*sp.Scale.Y);
             }
-        }
 
-        //GameScreen
-        public override void Initialize(Vector2u targetSize)
-        {
-            if (this.IsInitialized)
-                return;
+            // draw version/about
+            this._font.StringSprite.Scale = new Vector2f(1, 1);
+            this._font.RenderText(AuthorText);
+            var x = this.TargetSize.X - this._font.StringSprite.TextureRect.Width - 10;
+            var y = this.TargetSize.Y - this._font.StringSprite.TextureRect.Height - 10;
+            this._font.StringSprite.Position = new Vector2f(x, y);
+            target.Draw(this._font.StringSprite);
 
-            base.Initialize(targetSize);
-            this._font = new BitmapFont("Assets/5x5all.png");
-            GameStats.Initialize();
+            this._font.RenderText(VersionText);
+            x = this.TargetSize.X - this._font.StringSprite.TextureRect.Width - 10;
+            y -= this._font.ScreenLineHeight;
+            this._font.StringSprite.Position = new Vector2f(x, y);
+            target.Draw(this._font.StringSprite);
         }
 
         //GameScreen
@@ -111,6 +101,30 @@
             var angle = time.AsSeconds()*2*Math.PI*BounceTime*0.5; 
             var offset = Math.Sin(angle);
             this._bounceOffset = (float) Math.Abs(offset) * BounceDistance;
+        }
+
+        //ActiveEntity
+        protected override void Activate()
+        {
+            GameScreenManager.RenderWindow.KeyPressed += this.HandleKeyPress;
+            //this is here so the Stats option can be added after the first game
+            if (GameStats.Instance.HasStats)
+                this._menuOptions = new[] { StartString, InstructionsString, StatsString, QuitString };
+            else
+                this._menuOptions = new[] { StartString, InstructionsString, QuitString };
+        }
+
+        //ActiveEntity
+        protected override void Deactivate()
+        {
+            GameScreenManager.RenderWindow.KeyPressed -= this.HandleKeyPress;
+        }
+
+        //GameScreen
+        protected override void OnInitialize()
+        {
+            this._font = new BitmapFont(ConfigHelper.GeneralFontLocation);
+            GameStats.Initialize();
         }
 
         #endregion Inherited members
@@ -140,6 +154,8 @@
                 return; //may not be needed since this method is only called by HandleKeyPress which also checks it
 
             var choiceText = this._menuOptions[this._selectedOption];
+            if(choiceText.Equals(InstructionsString))
+                GameScreenManager.PushScreen(new InstructionsScreen());
             if(choiceText.Equals(QuitString))
                 GameScreenManager.ShutDown();
             if(choiceText.Equals(StartString))
