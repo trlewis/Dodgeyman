@@ -1,6 +1,7 @@
 ﻿namespace Dodgeyman.GameScreens
 {
     using System.Collections.Generic;
+    using Code;
     using Models.Stats;
     using SFML.Graphics;
     using SFML.System;
@@ -83,7 +84,8 @@
             IsRunning = true;
 
             var contextSettings = new ContextSettings { DepthBits = 24 };
-            _window = new RenderWindow(new VideoMode(600, 600), "Dodgeyman", Styles.Close | Styles.Titlebar, contextSettings);
+            var vidMode = new VideoMode(ConfigHelper.ScreenSize, ConfigHelper.ScreenSize);
+            _window = new RenderWindow(vidMode, "Dodgeyman", Styles.Close | Styles.Titlebar, contextSettings);
             _window.SetActive();
             _window.SetKeyRepeatEnabled(false);
             _window.Closed += (sender, args) => ShutDown();

@@ -1,5 +1,6 @@
 ﻿namespace Dodgeyman.Code
 {
+    using System;
     using System.Configuration;
 
     /// <summary>
@@ -23,6 +24,22 @@
         public static string NumberFontLocation
         {
             get { return ConfigurationManager.AppSettings["NumberFontLocation"]; }
+        }
+
+        /// <summary>
+        /// What percent of the lines that spawn should be patterns versus single lines.
+        /// </summary>
+        public static int PatternPercentage
+        {
+            get { return Int32.Parse(ConfigurationManager.AppSettings["PatternPercentage"]); }
+        }
+
+        /// <summary>
+        /// The resolution of both dimensions of the window.
+        /// </summary>
+        public static uint ScreenSize
+        {
+            get { return UInt32.Parse(ConfigurationManager.AppSettings["ScreenSize"]); }
         }
 
         /// <summary>

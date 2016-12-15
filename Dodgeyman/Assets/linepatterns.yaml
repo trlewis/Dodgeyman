@@ -41,6 +41,46 @@ lineTemplates:
   - lineType: diagonal
     origin: bottom-right
     color: cyan
+---
+name: red diagonal x left
+lineTemplates:
+  - lineType: diagonal
+    origin: bottom-left
+	color: red
+
+  - lineType: diagonal
+    origin: top-left
+	color: red
+---
+name: red diagonal x right
+lineTemplates:
+  - lineType: diagonal
+    origin: bottom-right
+	color: red
+
+  - lineType: diagonal
+    origin: top-right
+	color: red
+---
+name: cyan diagonal x left
+lineTemplates:
+  - lineType: diagonal
+    origin: bottom-left
+	color: cyan
+
+  - lineType: diagonal
+    origin: top-left
+	color: cyan
+---
+name: cyan diagonal x right
+lineTemplates:
+  - lineType: diagonal
+    origin: bottom-right
+	color: cyan
+
+  - lineType: diagonal
+    origin: top-right
+	color: cyan
 #
 # ROTATE Xs
 #
@@ -86,11 +126,11 @@ lineTemplates:
   - lineType: rotate
     origin: top-left
 	color: cyan
-	isClockwise: true
+	isClockwise: false
 
   - lineType: rotate
     origin: top-right
-	isClockwise: false
+	isClockwise: true
 	color: cyan
 #
 # ORTHAGONAL SANDWICHES

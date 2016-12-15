@@ -209,7 +209,7 @@
                 return;
 
             var whatToSpawn = this._rand.Next(100);
-            if (whatToSpawn < 30)
+            if (whatToSpawn < ConfigHelper.PatternPercentage)
             {
                 foreach (var lt in LinePatternGenerator.GetRandomPatternTemplates())
                     this.AddLine(lt.CreateLine(this.Player, this.TargetSize));
