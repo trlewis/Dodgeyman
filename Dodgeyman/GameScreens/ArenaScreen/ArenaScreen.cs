@@ -198,7 +198,7 @@
             this.Player.IsActive = false;
             GameStats.Initialize();
             GameStats.Instance.AddSessionStats(this._stats);
-            this._gameoverPanel = new GameOverPanel(this.TargetSize);
+            this._gameoverPanel = new GameOverPanel(this.TargetSize, this._stats);
         }
 
         private void HandleLineSpawning()
