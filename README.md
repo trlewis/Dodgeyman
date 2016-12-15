@@ -16,3 +16,4 @@ Windows is currently the only supported platform.
 ## Dependencies
 
 * [SFML.Net 2.2 32-bit](http://www.sfml-dev.org/download/sfml.net/) (included in repo)
+* [YamlDotNet](https://github.com/aaubry/YamlDotNet) (included in repo)
